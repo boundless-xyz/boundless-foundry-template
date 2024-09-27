@@ -1,8 +1,8 @@
 # Counter Example
 
 > This example should be run against a deployment of the Boundless market.
-> See the [local devnet doc](TODO) for info on running one locally.
-> Environment variables for connecting to and interacting with the network are defined in a [.env file](../../.env).
+> See the [local devnet doc][local-devnet-guide] for info on running one locally.
+> Environment variables for connecting to and interacting with the network are defined in a [.env file](./.env).
 
 ## Build
 
@@ -24,6 +24,7 @@ forge script contracts/scripts/Deploy.s.sol --rpc-url ${RPC_URL:?} --broadcast -
 
 Save the `Counter` contract address to an env variable:
 
+<!-- TODO: Update me -->
 ```bash
 export COUNTER_ADDRESS=#COPY COUNTER ADDRESS FROM DEPLOY LOGS
 ```
@@ -44,3 +45,5 @@ To run the example run:
 PINATA_JWT=${PINATA_JWT:?} RUST_LOG=info cargo run --bin example-counter -- --counter-address ${COUNTER_ADDRESS:?}
 ```
 
+<!-- TODO: Link to GH pages instead when it's available -->
+[local-devnet-guide]: https://github.com/boundless-xyz/boundless/blob/main/docs/src/broker/local_devnet.md
