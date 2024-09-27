@@ -22,14 +22,11 @@ import {RiscZeroCheats} from "risc0/test/RiscZeroCheats.sol";
 import {Receipt as RiscZeroReceipt} from "risc0/IRiscZeroVerifier.sol";
 import {RiscZeroMockVerifier} from "risc0/test/RiscZeroMockVerifier.sol";
 import {EvenNumber} from "../src/EvenNumber.sol";
-import {Elf} from "./Elf.sol"; // auto-generated contract after running `cargo build`.
+import {ImageID} from "../src/ImageID.sol";
 
 contract EvenNumberTest is RiscZeroCheats, Test {
     EvenNumber public evenNumber;
     RiscZeroMockVerifier public verifier;
-
-    bytes public constant MOCK_JOURNAL = bytes("I'm the journal for _some_ zkVM program");
-    bytes32 public constant IMAGE_ID = bytes32(uint256(0xec80));
 
     function setUp() public {
         verifier = new RiscZeroMockVerifier(0);
