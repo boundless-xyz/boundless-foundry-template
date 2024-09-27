@@ -4,13 +4,12 @@
 
 use std::time::{Duration, SystemTime};
 
-use crate::counter::{ICounter, ICounter::ICounterInstance};
+use crate::even_number::IEvenNumber::IEvenNumberInstance;
 use alloy::{
     network::EthereumWallet,
     primitives::{utils::parse_units, Address, B256},
     providers::{Provider, ProviderBuilder},
     signers::local::PrivateKeySigner,
-    sol_types::SolCall,
 };
 use anyhow::{Context, Result};
 use boundless_market::{
@@ -21,7 +20,7 @@ use boundless_market::{
     storage::{storage_provider_from_env, StorageProvider},
 };
 use clap::Parser;
-use guests::{ECHO_ELF, ECHO_ID};
+use guests::{IS_EVEN_ELF, IS_EVEN_ID};
 use risc0_zkvm::{
     default_executor,
     serde::to_vec,
@@ -34,10 +33,17 @@ use url::Url;
 /// Timeout for the transaction to be confirmed.
 pub const TX_TIMEOUT: Duration = Duration::from_secs(30);
 
-mod counter {
+// mod counter {
+//     alloy::sol!(
+//         #![sol(rpc, all_derives)]
+//         "../contracts/src/ICounter.sol"
+//     );
+// }
+
+mod even_number {
     alloy::sol!(
         #![sol(rpc, all_derives)]
-        "../contracts/src/ICounter.sol"
+        "../contracts/src/IEvenNumber.sol"
     );
 }
 
@@ -48,12 +54,12 @@ struct Args {
     /// URL of the Ethereum RPC endpoint.
     #[clap(short, long, env)]
     rpc_url: Url,
-    /// Private key used to interact with the Counter contract.
+    /// Private key used to interact with the EvenNumber contract.
     #[clap(short, long, env)]
     wallet_private_key: PrivateKeySigner,
-    /// Address of the Counter contract.
+    /// Address of the EvenNumber contract.
     #[clap(short, long, env)]
-    counter_address: Address,
+    even_number_address: Address,
     /// Address of the ProofMarket contract.
     #[clap(short, long, env)]
     proof_market_address: Address,
@@ -68,9 +74,9 @@ async fn main() -> Result<()> {
     dotenvy::dotenv()?;
     let args = Args::parse();
 
-    // We use a timestamp as input to the ECHO guest code as the Counter contract
+    // We use a timestamp as input to the IS_EVEN guest code as the EvenNumber contract
     // accepts only unique proofs. Using the same input twice would result in the same proof.
-    let image_id = B256::try_from(Digest::from(ECHO_ID).as_bytes())?;
+    let image_id = B256::try_from(Digest::from(IS_EVEN_ID).as_bytes())?;
     let timestamp = format! {"{:?}", SystemTime::now()};
     let input = timestamp.as_bytes();
 
@@ -78,7 +84,7 @@ async fn main() -> Result<()> {
     // the market unprovable requests. We also get the expected journal value here.
     let env = ExecutorEnv::builder().write_slice(input).build()?;
     let executor = default_executor();
-    let session_info = executor.execute(env, ECHO_ELF)?;
+    let session_info = executor.execute(env, IS_EVEN_ELF)?;
     let journal_digest = session_info.journal.digest();
 
     // Setup to interact with the Market contract
@@ -123,7 +129,7 @@ async fn main() -> Result<()> {
     // It uses a temporary file storage provider if `RISC0_DEV_MODE` is set;
     // or if you'd like to use Pinata or S3 instead, you can set the appropriate env variables.
     let storage_provider = storage_provider_from_env().await?;
-    let elf_url = storage_provider.upload_image(ECHO_ELF).await?;
+    let elf_url = storage_provider.upload_image(IS_EVEN_ELF).await?;
 
     // Construct the request from its individual parts.
     let request = ProvingRequest::new(
@@ -150,30 +156,20 @@ async fn main() -> Result<()> {
         market.wait_for_request_fulfillment(request_id, Duration::from_secs(5), None).await?;
     tracing::info!("Request {} fulfilled", request_id);
 
-    // We interact with the Counter contract by calling the increment function with the journal and
+    // We interact with the EvenNumber contract by calling the set function with the journal and
     // seal returned by the market.
-    let counter = ICounterInstance::new(args.counter_address, provider.clone());
+    let even_number = IEvenNumberInstance::new(args.even_number_address, provider.clone());
     let journal_digest = B256::try_from(Sha256::digest(&journal).as_slice())?;
-    let call_increment = counter.increment(seal, image_id, journal_digest).from(caller);
+    let set_number = even_number.set(journal_digest.into(), seal).from(caller);
 
-    // By calling the increment function, we verify the seal against the published roots
+    // By calling the set function, we verify the seal against the published roots
     // of the SetVerifier contract.
-    tracing::info!("Calling Counter increment function");
-    let pending_tx = call_increment.send().await.context("failed to broadcast tx")?;
+    tracing::info!("Calling EvenNumber set function");
+    let pending_tx = set_number.send().await.context("failed to broadcast tx")?;
     tracing::info!("Broadcasting tx {}", pending_tx.tx_hash());
     let tx_hash =
         pending_tx.with_timeout(Some(TX_TIMEOUT)).watch().await.context("failed to confirm tx")?;
     tracing::info!("Tx {:?} confirmed", tx_hash);
-
-    // We query the counter value for the caller address to check that the counter has been
-    // increased.
-    let count = counter
-        .getCount(caller)
-        .call()
-        .await
-        .with_context(|| format!("failed to call {}", ICounter::getCountCall::SIGNATURE))?
-        ._0;
-    tracing::info!("Counter value for address: {:?} is {:?}", caller, count);
 
     Ok(())
 }
