@@ -13,4 +13,5 @@ pragma solidity ^0.8.13;
 // coming from the market to increment their counter.
 interface IEvenNumber {
     function set(uint256 x, bytes calldata seal) external;
+    function get() external view returns (uint256);
 }
