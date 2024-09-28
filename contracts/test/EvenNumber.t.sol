@@ -36,7 +36,7 @@ contract EvenNumberTest is RiscZeroCheats, Test {
 
     function test_SetEven() public {
         uint256 number = 12345678;
-        RiscZeroReceipt memory receipt = verifier.mockProve(IMAGE_ID, sha256(abi.encode(number)));
+        RiscZeroReceipt memory receipt = verifier.mockProve(ImageID.IS_EVEN_ID, sha256(abi.encode(number)));
 
         evenNumber.set(number, receipt.seal);
         assertEq(evenNumber.get(), number);
@@ -44,7 +44,7 @@ contract EvenNumberTest is RiscZeroCheats, Test {
 
     function test_SetZero() public {
         uint256 number = 0;
-        RiscZeroReceipt memory receipt = verifier.mockProve(IMAGE_ID, sha256(abi.encode(number)));
+        RiscZeroReceipt memory receipt = verifier.mockProve(ImageID.IS_EVEN_ID, sha256(abi.encode(number)));
 
         evenNumber.set(number, receipt.seal);
         assertEq(evenNumber.get(), number);

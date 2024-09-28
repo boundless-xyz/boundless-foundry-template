@@ -6,7 +6,7 @@ pragma solidity ^0.8.20;
 
 import {Script, console2} from "forge-std/Script.sol";
 import {IRiscZeroVerifier} from "risc0/IRiscZeroVerifier.sol";
-import {Counter} from "../src/Counter.sol";
+import {EvenNumber} from "../src/EvenNumber.sol";
 
 contract Deploy is Script {
     function run() external payable {
@@ -16,9 +16,9 @@ contract Deploy is Script {
         vm.startBroadcast(key);
 
         IRiscZeroVerifier verifier = IRiscZeroVerifier(verifierAddress);
-        Counter counter = new Counter(verifier);
-        address counterAddress = address(counter);
-        console2.log("Deployed Counter to", counterAddress);
+        EvenNumber evenNumber = new EvenNumber(verifier);
+        address evenNumberAddress = address(evenNumber);
+        console2.log("Deployed Counter to", evenNumberAddress);
 
         vm.stopBroadcast();
     }

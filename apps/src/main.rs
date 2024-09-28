@@ -91,8 +91,10 @@ async fn main() -> Result<()> {
     let caller = args.wallet_private_key.address();
     let signer = args.wallet_private_key.clone();
     let wallet = EthereumWallet::from(args.wallet_private_key);
-    let provider =
-        ProviderBuilder::new().with_recommended_fillers().wallet(wallet).on_http(args.rpc_url);
+    let provider = ProviderBuilder::new()
+        .with_recommended_fillers()
+        .wallet(wallet)
+        .on_http(args.rpc_url);
     let market = ProofMarketService::new(args.proof_market_address, provider.clone(), caller);
 
     // We create a proving request with the requirements and offer to send to the market.
@@ -152,8 +154,9 @@ async fn main() -> Result<()> {
     // We wait for the request to be fulfilled by the market. The market will return the journal and
     // seal.
     tracing::info!("Waiting for request {} to be fulfilled", request_id);
-    let (journal, seal) =
-        market.wait_for_request_fulfillment(request_id, Duration::from_secs(5), None).await?;
+    let (journal, seal) = market
+        .wait_for_request_fulfillment(request_id, Duration::from_secs(5), None)
+        .await?;
     tracing::info!("Request {} fulfilled", request_id);
 
     // We interact with the EvenNumber contract by calling the set function with the journal and
@@ -167,8 +170,11 @@ async fn main() -> Result<()> {
     tracing::info!("Calling EvenNumber set function");
     let pending_tx = set_number.send().await.context("failed to broadcast tx")?;
     tracing::info!("Broadcasting tx {}", pending_tx.tx_hash());
-    let tx_hash =
-        pending_tx.with_timeout(Some(TX_TIMEOUT)).watch().await.context("failed to confirm tx")?;
+    let tx_hash = pending_tx
+        .with_timeout(Some(TX_TIMEOUT))
+        .watch()
+        .await
+        .context("failed to confirm tx")?;
     tracing::info!("Tx {:?} confirmed", tx_hash);
 
     Ok(())
