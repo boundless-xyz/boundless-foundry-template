@@ -20,12 +20,13 @@ checksum = "512761e0bb2578dd7380c6baaa0f4ce03e84f95e960231d1dec8bf4d7d6e2627"
 [[package]]
 name = "aggregation-set"
 version = "0.1.0"
-source = "git+ssh://git@github.com/boundless-xyz/boundless.git?rev=6d8ea085cfd81241b5a2643d2cb0845a7284cf7a#6d8ea085cfd81241b5a2643d2cb0845a7284cf7a"
+source = "git+ssh://git@github.com/boundless-xyz/boundless.git?rev=160fbad37a9fc539799acf2e15b06ee31328387c#160fbad37a9fc539799acf2e15b06ee31328387c"
 dependencies = [
- "alloy-primitives 0.7.7",
- "alloy-sol-types 0.7.7",
+ "alloy-primitives 0.8.5",
+ "alloy-sol-types 0.8.5",
  "anyhow",
  "guest-aggregation-set",
+ "hex",
  "risc0-binfmt",
  "risc0-zkvm",
  "serde",
@@ -65,18 +66,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3f4a4aaae80afd4be443a6aecd92a6b255dcdd000f97996928efb33d8a71e100"
 dependencies = [
  "alloy-consensus 0.2.1",
- "alloy-contract 0.2.1",
  "alloy-core 0.7.7",
  "alloy-eips 0.2.1",
  "alloy-genesis 0.2.1",
- "alloy-network 0.2.1",
- "alloy-node-bindings",
  "alloy-provider 0.2.1",
  "alloy-rpc-client 0.2.1",
  "alloy-serde 0.2.1",
- "alloy-signer 0.2.1",
- "alloy-signer-local",
- "alloy-transport 0.2.1",
  "alloy-transport-http 0.2.1",
 ]
 
@@ -87,14 +82,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c37d89f69cb43901949ba29307ada8b9e3b170f94057ad4c04d6fd169d24d65f"
 dependencies = [
  "alloy-consensus 0.3.6",
- "alloy-contract 0.3.6",
+ "alloy-contract",
  "alloy-core 0.8.5",
  "alloy-eips 0.3.6",
  "alloy-genesis 0.3.6",
  "alloy-network 0.3.6",
+ "alloy-node-bindings",
  "alloy-provider 0.3.6",
  "alloy-rpc-client 0.3.6",
  "alloy-serde 0.3.6",
+ "alloy-signer 0.3.6",
+ "alloy-signer-local",
  "alloy-transport 0.3.6",
  "alloy-transport-http 0.3.6",
 ]
@@ -135,26 +133,6 @@ dependencies = [
  "alloy-serde 0.3.6",
  "c-kzg",
  "serde",
-]
-
-[[package]]
-name = "alloy-contract"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3f4e0ef72b0876ae3068b2ed7dfae9ae1779ce13cfaec2ee1f08f5bd0348dc57"
-dependencies = [
- "alloy-dyn-abi 0.7.7",
- "alloy-json-abi 0.7.7",
- "alloy-network 0.2.1",
- "alloy-network-primitives 0.2.1",
- "alloy-primitives 0.7.7",
- "alloy-provider 0.2.1",
- "alloy-rpc-types-eth 0.2.1",
- "alloy-sol-types 0.7.7",
- "alloy-transport 0.2.1",
- "futures",
- "futures-util",
- "thiserror",
 ]
 
 [[package]]
@@ -432,13 +410,14 @@ dependencies = [
 
 [[package]]
 name = "alloy-node-bindings"
-version = "0.2.1"
+version = "0.3.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "16faebb9ea31a244fd6ce3288d47df4be96797d9c3c020144b8f2c31543a4512"
+checksum = "5988a227293f949525f0a1b3e1ef728d2ef24afa96bad2b7788c6c9617fa3eec"
 dependencies = [
- "alloy-genesis 0.2.1",
- "alloy-primitives 0.7.7",
+ "alloy-genesis 0.3.6",
+ "alloy-primitives 0.8.5",
  "k256",
+ "rand",
  "serde_json",
  "tempfile",
  "thiserror",
@@ -507,12 +486,9 @@ dependencies = [
  "alloy-json-rpc 0.2.1",
  "alloy-network 0.2.1",
  "alloy-network-primitives 0.2.1",
- "alloy-node-bindings",
  "alloy-primitives 0.7.7",
  "alloy-rpc-client 0.2.1",
- "alloy-rpc-types-anvil",
  "alloy-rpc-types-eth 0.2.1",
- "alloy-signer-local",
  "alloy-transport 0.2.1",
  "alloy-transport-http 0.2.1",
  "async-stream",
@@ -543,9 +519,12 @@ dependencies = [
  "alloy-json-rpc 0.3.6",
  "alloy-network 0.3.6",
  "alloy-network-primitives 0.3.6",
+ "alloy-node-bindings",
  "alloy-primitives 0.8.5",
  "alloy-rpc-client 0.3.6",
+ "alloy-rpc-types-anvil",
  "alloy-rpc-types-eth 0.3.6",
+ "alloy-signer-local",
  "alloy-transport 0.3.6",
  "alloy-transport-http 0.3.6",
  "async-stream",
@@ -631,12 +610,12 @@ dependencies = [
 
 [[package]]
 name = "alloy-rpc-types-anvil"
-version = "0.2.1"
+version = "0.3.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "52ab6509cd38b2e8c8da726e0f61c1e314a81df06a38d37ddec8bced3f8d25ed"
+checksum = "d25cb45ad7c0930dd62eecf164d2afe4c3d2dd2c82af85680ad1f118e1e5cb83"
 dependencies = [
- "alloy-primitives 0.7.7",
- "alloy-serde 0.2.1",
+ "alloy-primitives 0.8.5",
+ "alloy-serde 0.3.6",
  "serde",
 ]
 
@@ -732,14 +711,14 @@ dependencies = [
 
 [[package]]
 name = "alloy-signer-local"
-version = "0.2.1"
+version = "0.3.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1b0707d4f63e4356a110b30ef3add8732ab6d181dd7be4607bf79b8777105cee"
+checksum = "9fabe917ab1778e760b4701628d1cae8e028ee9d52ac6307de4e1e9286ab6b5f"
 dependencies = [
- "alloy-consensus 0.2.1",
- "alloy-network 0.2.1",
- "alloy-primitives 0.7.7",
- "alloy-signer 0.2.1",
+ "alloy-consensus 0.3.6",
+ "alloy-network 0.3.6",
+ "alloy-primitives 0.8.5",
+ "alloy-signer 0.3.6",
  "async-trait",
  "k256",
  "rand",
@@ -780,7 +759,6 @@ version = "0.7.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "867a5469d61480fea08c7333ffeca52d5b621f5ca2e44f271b117ec1fc9a0525"
 dependencies = [
- "alloy-json-abi 0.7.7",
  "alloy-sol-macro-input 0.7.7",
  "const-hex",
  "heck 0.5.0",
@@ -818,13 +796,11 @@ version = "0.7.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2e482dc33a32b6fadbc0f599adea520bd3aaa585c141a80b404d0a3e3fa72528"
 dependencies = [
- "alloy-json-abi 0.7.7",
  "const-hex",
  "dunce",
  "heck 0.5.0",
  "proc-macro2",
  "quote",
- "serde_json",
  "syn 2.0.77",
  "syn-solidity 0.7.7",
 ]
@@ -872,7 +848,6 @@ version = "0.7.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a91ca40fa20793ae9c3841b83e74569d1cc9af29a2f5237314fd3452d51e38c7"
 dependencies = [
- "alloy-json-abi 0.7.7",
  "alloy-primitives 0.7.7",
  "alloy-sol-macro 0.7.7",
  "const-hex",
@@ -1759,12 +1734,12 @@ dependencies = [
 [[package]]
 name = "boundless-market"
 version = "0.1.0"
-source = "git+ssh://git@github.com/boundless-xyz/boundless.git?rev=6d8ea085cfd81241b5a2643d2cb0845a7284cf7a#6d8ea085cfd81241b5a2643d2cb0845a7284cf7a"
+source = "git+ssh://git@github.com/boundless-xyz/boundless.git?rev=160fbad37a9fc539799acf2e15b06ee31328387c#160fbad37a9fc539799acf2e15b06ee31328387c"
 dependencies = [
  "aggregation-set",
- "alloy 0.2.1",
- "alloy-primitives 0.7.7",
- "alloy-sol-types 0.7.7",
+ "alloy 0.3.3",
+ "alloy-primitives 0.8.5",
+ "alloy-sol-types 0.8.5",
  "anyhow",
  "async-trait",
  "aws-sdk-s3",
@@ -2654,7 +2629,7 @@ dependencies = [
 [[package]]
 name = "guest-aggregation-set"
 version = "0.1.0"
-source = "git+ssh://git@github.com/boundless-xyz/boundless.git?rev=6d8ea085cfd81241b5a2643d2cb0845a7284cf7a#6d8ea085cfd81241b5a2643d2cb0845a7284cf7a"
+source = "git+ssh://git@github.com/boundless-xyz/boundless.git?rev=160fbad37a9fc539799acf2e15b06ee31328387c#160fbad37a9fc539799acf2e15b06ee31328387c"
 dependencies = [
  "risc0-build",
  "risc0-build-ethereum",
@@ -2663,7 +2638,7 @@ dependencies = [
 [[package]]
 name = "guest-assessor"
 version = "0.1.0"
-source = "git+ssh://git@github.com/boundless-xyz/boundless.git?rev=6d8ea085cfd81241b5a2643d2cb0845a7284cf7a#6d8ea085cfd81241b5a2643d2cb0845a7284cf7a"
+source = "git+ssh://git@github.com/boundless-xyz/boundless.git?rev=160fbad37a9fc539799acf2e15b06ee31328387c#160fbad37a9fc539799acf2e15b06ee31328387c"
 dependencies = [
  "hex",
  "risc0-build",
@@ -2673,7 +2648,7 @@ dependencies = [
 [[package]]
 name = "guest-util"
 version = "0.1.0"
-source = "git+ssh://git@github.com/boundless-xyz/boundless.git?rev=6d8ea085cfd81241b5a2643d2cb0845a7284cf7a#6d8ea085cfd81241b5a2643d2cb0845a7284cf7a"
+source = "git+ssh://git@github.com/boundless-xyz/boundless.git?rev=160fbad37a9fc539799acf2e15b06ee31328387c#160fbad37a9fc539799acf2e15b06ee31328387c"
 dependencies = [
  "hex",
  "risc0-build",
