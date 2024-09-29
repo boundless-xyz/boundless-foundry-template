@@ -60,7 +60,7 @@ export EVEN_NUMBER_ADDRESS=#COPY EVEN NUMBER ADDRESS FROM DEPLOY LOGS
 To run the example run:
 
 ```bash
-RISC0_DEV_MODE=1 RUST_LOG=info cargo run --bin app -- --even-number-address ${EVEN_NUMBER_ADDRESS:?}
+RISC0_DEV_MODE=1 RUST_LOG=info cargo run --bin app -- --even-number-address ${EVEN_NUMBER_ADDRESS:?} --number 4
 ```
 
 <!-- TODO: Update link once docs are public -->
