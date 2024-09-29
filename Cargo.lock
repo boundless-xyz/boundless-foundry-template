@@ -2384,8 +2384,11 @@ dependencies = [
 name = "guests"
 version = "0.1.0"
 dependencies = [
+ "alloy-primitives",
+ "alloy-sol-types",
  "risc0-build",
  "risc0-build-ethereum",
+ "risc0-zkvm",
 ]
 
 [[package]]
