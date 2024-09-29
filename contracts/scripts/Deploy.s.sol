@@ -9,9 +9,9 @@ import {IRiscZeroVerifier} from "risc0/IRiscZeroVerifier.sol";
 import {EvenNumber} from "../src/EvenNumber.sol";
 
 contract Deploy is Script {
-    function run() external payable {
+    function run() external {
         // load ENV variables first
-        uint256 key = vm.envUint("ADMIN_PRIVATE_KEY");
+        uint256 key = vm.envUint("WALLET_PRIVATE_KEY");
         address verifierAddress = vm.envAddress("SET_VERIFIER_ADDRESS");
         vm.startBroadcast(key);
 
