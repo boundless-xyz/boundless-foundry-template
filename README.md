@@ -13,6 +13,8 @@ To build the example run:
 
 ```bash
 cargo build
+# Populate the `./lib` submodule dependancies
+git submodule update --init --recursive
 forge build
 ```
 
@@ -43,6 +45,7 @@ Save the `EvenNumber` contract address to an env variable:
 
 <!-- TODO: Update me -->
 ```bash
+# First contract deployed and top of logs is EvenNumber
 export EVEN_NUMBER_ADDRESS=#COPY EVEN NUMBER ADDRESS FROM DEPLOY LOGS
 ```
 
