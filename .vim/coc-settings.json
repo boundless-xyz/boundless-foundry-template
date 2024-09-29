@@ -1,0 +1,11 @@
+{
+  "rust-analyzer.linkedProjects": [
+    "./apps/Cargo.toml",
+    "./guests/Cargo.toml",
+    "./guests/is-even/Cargo.toml",
+  ],
+  "rust-analyzer.check.extraEnv": {
+    "RISC0_SKIP_BUILD": "1",
+    "RISC0_SKIP_BUILD_KERNELS": "1",
+  }
+}
