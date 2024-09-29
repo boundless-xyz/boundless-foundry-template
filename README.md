@@ -18,7 +18,17 @@ forge build
 
 ## Test
 
-TODO
+Test the Solidity smart contracts with:
+
+```
+forge test -vvv
+```
+
+Test the Rust code including the guest with:
+
+```
+cargo test
+```
 
 ## Deploy
 

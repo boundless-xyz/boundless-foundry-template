@@ -14,7 +14,7 @@
 
 use alloy_primitives::U256;
 use alloy_sol_types::SolValue;
-use guests::IS_EVEN_ID;
+use guests::IS_EVEN_ELF;
 use risc0_zkvm::{default_executor, ExecutorEnv};
 
 #[test]
