@@ -2,13 +2,13 @@
 //
 // All rights reserved.
 
-use rand::Rng;
 use std::time::Duration;
 
 use crate::even_number::IEvenNumber::IEvenNumberInstance;
 use alloy::{
-    primitives::{aliases::U96, utils::parse_ether, Address, B256},
+    primitives::{aliases::U96, utils::parse_ether, Address, U256},
     signers::local::PrivateKeySigner,
+    sol_types::SolValue,
 };
 use anyhow::{Context, Result};
 use boundless_market::{
@@ -20,8 +20,8 @@ use guests::{IS_EVEN_ELF, IS_EVEN_ID};
 use risc0_zkvm::{default_executor, sha::Digestible, ExecutorEnv};
 use url::Url;
 
-/// Timeout for the transaction to be confirmed.
-pub const TX_TIMEOUT: Duration = Duration::from_secs(30);
+/// Timeout for the EVM RPC transaction to be confirmed.
+pub const TX_TIMEOUT: Duration = Duration::from_secs(3);
 
 mod even_number {
     alloy::sol!(
@@ -49,6 +49,9 @@ struct Args {
     /// Address of the ProofMarket contract.
     #[clap(short, long, env)]
     proof_market_address: Address,
+    /// The input to provide to the guest binary
+    #[clap(short, long)]
+    input: U256,
 }
 
 #[tokio::main]
@@ -67,6 +70,7 @@ async fn main() -> Result<()> {
         args.proof_market_address,
         args.set_verifier_address,
         args.even_number_address,
+        args.input,
     )
     .await?;
 
@@ -79,6 +83,7 @@ async fn run(
     proof_market_address: Address,
     set_verifier_address: Address,
     even_number_address: Address,
+    input: U256,
 ) -> Result<()> {
     // Create a Boundless client from the provided parameters.
     let boundless_client = Client::from_parts(
@@ -93,16 +98,9 @@ async fn run(
     let image_url = boundless_client.upload_image(IS_EVEN_ELF).await?;
     tracing::info!("Uploaded image to {}", image_url);
 
-    // We use a random integer as input to the guest code as the EvenNumber contract
-    // accepts only unique proofs. Using the same input twice would result in the same proof.
-    let mut rng = rand::thread_rng();
-    let random_number = rng.gen::<u8>();
-
     // Encode the input and upload it to the storage provider.
-    tracing::info!("Number input to check if even: {}", random_number);
-    // TODO: is LE or BE needed (for RISC V VM maybe, or should match native?)
-    let input = encode_input(&random_number.to_ne_bytes())?;
-    let input_url = boundless_client.upload_input(&input).await?;
+    let encoded_input = &input.abi_encode();
+    let input_url = boundless_client.upload_input(&encoded_input).await?;
     tracing::info!("Uploaded input to {}", input_url);
 
     // Dry run the ELF with the input to get the journal and cycle count.
@@ -110,7 +108,9 @@ async fn run(
     // It can also be useful to ensure the guest can be executed correctly and we do not send into
     // the market unprovable proving requests. If you have a different mechanism to get the expected
     // journal and set a price, you can skip this step.
-    let env = ExecutorEnv::builder().write_slice(&input).build()?;
+    let env = ExecutorEnv::builder()
+        .write_slice(&input.abi_encode())
+        .build()?;
     let session_info = default_executor().execute(env, IS_EVEN_ELF)?;
     let mcycles_count = session_info
         .segments
@@ -118,13 +118,13 @@ async fn run(
         .map(|segment| 1 << segment.po2)
         .sum::<u64>()
         .div_ceil(1_000_000);
-    let journal = session_info.journal;
+    let required_journal = session_info.journal;
 
     // Create a proving request with the image, input, requirements and offer.
     // The ELF (i.e. image) is specified by the image URL.
     // The input can be specified by an URL, as in this example, or can be posted on chain by using
     // the `with_inline` method with the input bytes.
-    // The requirements are the ECHO_ID and the digest of the journal. In this way, the market can
+    // The requirements are the IS_EVEN_ID and the digest of the journal. In this way, the market can
     // verify that the proof is correct by checking both the committed image id and digest of the
     // journal. The offer specifies the price range and the timeout for the request.
     // Additionally, the offer can also specify:
@@ -138,7 +138,7 @@ async fn run(
         .with_input(Input::url(&input_url))
         .with_requirements(Requirements::new(
             IS_EVEN_ID,
-            Predicate::digest_match(journal.digest()),
+            Predicate::digest_match(required_journal.digest()),
         ))
         .with_offer(
             Offer::default()
@@ -167,21 +167,22 @@ async fn run(
     let request_id = boundless_client.submit_request(&request).await?;
     tracing::info!("Request {} submitted", request_id);
 
-    // Wait for the request to be fulfilled by the market. The market will return the journal and
-    // seal.
+    // Wait for the request to be fulfilled by the market.
+    // We already calculated a [required_journal],
+    // and use it over the journal provided, and extract only the seal.
     tracing::info!("Waiting for request {} to be fulfilled", request_id);
-    let (_journal, seal) = boundless_client
+    let (_ignored_returned_journal, seal) = boundless_client
         .wait_for_request_fulfillment(request_id, Duration::from_secs(5), None)
         .await?;
     tracing::info!("Request {} fulfilled", request_id);
 
     // Interact with the EvenNumber contract by calling the set function with the journal and
     // seal returned by the market.
-    let even_number =
+    let even_number_instance =
         IEvenNumberInstance::new(even_number_address, boundless_client.provider().clone());
-    let journal_digest = B256::try_from(journal.digest().as_bytes())?;
-    let set_number = even_number
-        .set(journal_digest.into(), seal)
+    let encoded_number = U256::from_be_slice(&required_journal.bytes);
+    let set_number = even_number_instance
+        .set(encoded_number, seal)
         .from(boundless_client.caller());
 
     // By calling the set function, we verify the seal against the published roots
@@ -197,7 +198,7 @@ async fn run(
     tracing::info!("Tx {:?} confirmed", tx_hash);
 
     // We query the value stored at the EvenNumber address to check it was set correctly
-    let number = even_number
+    let number = even_number_instance
         .get()
         .call()
         .await
@@ -210,13 +211,6 @@ async fn run(
     );
 
     Ok(())
-}
-
-// Encode the input as expected by the echo guest.
-fn encode_input(input: &[u8]) -> Result<Vec<u8>> {
-    Ok(bytemuck::pod_collect_to_vec(&risc0_zkvm::serde::to_vec(
-        input,
-    )?))
 }
 
 #[cfg(test)]
@@ -234,6 +228,11 @@ mod tests {
     use tracing_test::traced_test;
 
     use super::*;
+
+    /// Test Timeout for the entire [run] to complete.
+    /// Should be greater than [TX_TIMEOUT].
+    /// Heuristic: ~30 seconds needed required to finish test.
+    const RUN_TIMEOUT: Duration = Duration::from_secs(60);
 
     alloy::sol!(
         #![sol(rpc)]
@@ -261,6 +260,9 @@ mod tests {
     // required. To run in dev mode, set the `RISC0_DEV_MODE` environment variable to `true`,
     // e.g.: `RISC0_DEV_MODE=true cargo test`
     async fn test_main() {
+        // Define input to guest
+        let input = U256::from(42);
+
         // Setup anvil and deploy contracts
         let anvil = Anvil::new().spawn();
         let ctx = TestCtx::new(&anvil).await.unwrap();
@@ -274,15 +276,16 @@ mod tests {
             broker.start_service().await.unwrap();
         });
 
-        // Run the main function with a timeout of 60 seconds
+        // Run the main function with a timeout
         let result = timeout(
-            Duration::from_secs(60),
+            RUN_TIMEOUT,
             run(
                 ctx.customer_signer,
                 anvil.endpoint_url(),
                 ctx.proof_market_addr,
                 ctx.set_verifier_addr,
                 even_number_address,
+                input,
             ),
         )
         .await;
@@ -298,7 +301,10 @@ mod tests {
             Err(_) => {
                 // If timeout occurred, abort the broker task and fail the test
                 broker_task.abort();
-                panic!("The run function did not complete within 60 seconds.");
+                panic!(
+                    "The run function did not complete within {:?} seconds.",
+                    RUN_TIMEOUT.as_secs()
+                );
             }
         }
 
