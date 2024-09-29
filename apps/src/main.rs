@@ -2,13 +2,13 @@
 //
 // All rights reserved.
 
-use rand::Rng;
 use std::time::Duration;
 
 use crate::even_number::IEvenNumber::IEvenNumberInstance;
 use alloy::{
-    primitives::{aliases::U96, utils::parse_ether, Address, B256},
+    primitives::{aliases::U96, utils::parse_ether, Address, U256},
     signers::local::PrivateKeySigner,
+    sol_types::SolValue,
 };
 use anyhow::{Context, Result};
 use boundless_market::{
@@ -34,6 +34,9 @@ mod even_number {
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
 struct Args {
+    /// The number to publish to the EvenNumber contract.
+    #[clap(short, long)]
+    number: u32,
     /// URL of the Ethereum RPC endpoint.
     #[clap(short, long, env)]
     rpc_url: Url,
@@ -60,32 +63,12 @@ async fn main() -> Result<()> {
     dotenvy::dotenv()?;
     let args = Args::parse();
 
-    // NOTE: Using a separate `run` function to facilitate testing below.
-    run(
+    // Create a Boundless client from the provided parameters.
+    let boundless_client = Client::from_parts(
         args.wallet_private_key,
         args.rpc_url,
         args.proof_market_address,
         args.set_verifier_address,
-        args.even_number_address,
-    )
-    .await?;
-
-    Ok(())
-}
-
-async fn run(
-    wallet_private_key: PrivateKeySigner,
-    rpc_url: Url,
-    proof_market_address: Address,
-    set_verifier_address: Address,
-    even_number_address: Address,
-) -> Result<()> {
-    // Create a Boundless client from the provided parameters.
-    let boundless_client = Client::from_parts(
-        wallet_private_key,
-        rpc_url,
-        proof_market_address,
-        set_verifier_address,
     )
     .await?;
 
@@ -93,15 +76,9 @@ async fn run(
     let image_url = boundless_client.upload_image(IS_EVEN_ELF).await?;
     tracing::info!("Uploaded image to {}", image_url);
 
-    // We use a random integer as input to the guest code as the EvenNumber contract
-    // accepts only unique proofs. Using the same input twice would result in the same proof.
-    let mut rng = rand::thread_rng();
-    let random_number = rng.gen::<u8>();
-
     // Encode the input and upload it to the storage provider.
-    tracing::info!("Number input to check if even: {}", random_number);
-    // TODO: is LE or BE needed (for RISC V VM maybe, or should match native?)
-    let input = encode_input(&random_number.to_ne_bytes())?;
+    tracing::info!("Number to publish: {}", args.number);
+    let input = U256::from(args.number).abi_encode();
     let input_url = boundless_client.upload_input(&input).await?;
     tracing::info!("Uploaded input to {}", input_url);
 
@@ -124,7 +101,7 @@ async fn run(
     // The ELF (i.e. image) is specified by the image URL.
     // The input can be specified by an URL, as in this example, or can be posted on chain by using
     // the `with_inline` method with the input bytes.
-    // The requirements are the ECHO_ID and the digest of the journal. In this way, the market can
+    // The requirements are the image ID and the digest of the journal. In this way, the market can
     // verify that the proof is correct by checking both the committed image id and digest of the
     // journal. The offer specifies the price range and the timeout for the request.
     // Additionally, the offer can also specify:
@@ -167,28 +144,26 @@ async fn run(
     let request_id = boundless_client.submit_request(&request).await?;
     tracing::info!("Request {} submitted", request_id);
 
-    // Wait for the request to be fulfilled by the market. The market will return the journal and
-    // seal.
+    // Wait for the request to be fulfilled by the market, returning the journal and seal.
     tracing::info!("Waiting for request {} to be fulfilled", request_id);
     let (_journal, seal) = boundless_client
         .wait_for_request_fulfillment(request_id, Duration::from_secs(5), None)
         .await?;
     tracing::info!("Request {} fulfilled", request_id);
 
-    // Interact with the EvenNumber contract by calling the set function with the journal and
-    // seal returned by the market.
-    let even_number =
-        IEvenNumberInstance::new(even_number_address, boundless_client.provider().clone());
-    let journal_digest = B256::try_from(journal.digest().as_bytes())?;
+    // Interact with the EvenNumber contract by calling the set function with our number and
+    // the seal (i.e. proof) returned by the market.
+    let even_number = IEvenNumberInstance::new(
+        args.even_number_address,
+        boundless_client.provider().clone(),
+    );
     let set_number = even_number
-        .set(journal_digest.into(), seal)
+        .set(U256::from(args.number), seal)
         .from(boundless_client.caller());
 
-    // By calling the set function, we verify the seal against the published roots
-    // of the SetVerifier contract.
-    tracing::info!("Calling EvenNumber set function");
+    tracing::info!("Broadcasting tx calling EvenNumber set function");
     let pending_tx = set_number.send().await.context("failed to broadcast tx")?;
-    tracing::info!("Broadcasting tx {}", pending_tx.tx_hash());
+    tracing::info!("Sent tx {}", pending_tx.tx_hash());
     let tx_hash = pending_tx
         .with_timeout(Some(TX_TIMEOUT))
         .watch()
@@ -210,11 +185,4 @@ async fn run(
     );
 
     Ok(())
-}
-
-// Encode the input as expected by the echo guest.
-fn encode_input(input: &[u8]) -> Result<Vec<u8>> {
-    Ok(bytemuck::pod_collect_to_vec(&risc0_zkvm::serde::to_vec(
-        input,
-    )?))
 }
