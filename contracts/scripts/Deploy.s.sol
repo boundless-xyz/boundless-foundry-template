@@ -18,7 +18,7 @@ contract Deploy is Script {
         IRiscZeroVerifier verifier = IRiscZeroVerifier(verifierAddress);
         EvenNumber evenNumber = new EvenNumber(verifier);
         address evenNumberAddress = address(evenNumber);
-        console2.log("Deployed Counter to", evenNumberAddress);
+        console2.log("Deployed EvenNumber to", evenNumberAddress);
 
         vm.stopBroadcast();
     }

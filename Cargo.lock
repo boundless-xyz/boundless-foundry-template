@@ -719,6 +719,27 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "86fdf8605db99b54d3cd748a44c6d04df638eb5dafb219b135d0149bd0db01f6"
 
 [[package]]
+name = "app"
+version = "0.1.0"
+dependencies = [
+ "alloy",
+ "anyhow",
+ "boundless-market",
+ "bytemuck",
+ "clap",
+ "dotenvy",
+ "guests",
+ "rand",
+ "risc0-zkvm",
+ "sha2",
+ "tokio",
+ "tracing",
+ "tracing-subscriber 0.3.18",
+ "tracing-test",
+ "url",
+]
+
+[[package]]
 name = "ark-bn254"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2067,27 +2088,6 @@ checksum = "534c5cf6194dfab3db3242765c03bbe257cf92f22b38f6bc0c58d59108a820ba"
 dependencies = [
  "libc",
  "windows-sys 0.52.0",
-]
-
-[[package]]
-name = "example-counter"
-version = "0.1.0"
-dependencies = [
- "alloy",
- "anyhow",
- "boundless-market",
- "bytemuck",
- "clap",
- "dotenvy",
- "guests",
- "rand",
- "risc0-zkvm",
- "sha2",
- "tokio",
- "tracing",
- "tracing-subscriber 0.3.18",
- "tracing-test",
- "url",
 ]
 
 [[package]]
