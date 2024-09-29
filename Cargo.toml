@@ -13,10 +13,10 @@ guests = { path = "./guests" }
 
 # boundless monorepo dependencies.
 # TODO(#4): while the repo is private, using the SSH URL and `net.git-fetch-with-cli = true` is required
-aggregation-set = { git = "ssh://git@github.com/boundless-xyz/boundless.git", rev = "9d1aedde0137e4be9fb016f422d3f4453b9e5015" }
-guest-assessor = { git = "ssh://git@github.com/boundless-xyz/boundless.git", rev = "9d1aedde0137e4be9fb016f422d3f4453b9e5015" }
-boundless-market = { git = "ssh://git@github.com/boundless-xyz/boundless.git", rev = "9d1aedde0137e4be9fb016f422d3f4453b9e5015" }
-broker = { git = "ssh://git@github.com/boundless-xyz/boundless.git", rev = "9d1aedde0137e4be9fb016f422d3f4453b9e5015" }
+aggregation-set = { git = "ssh://git@github.com/boundless-xyz/boundless.git", tag = "v0.1.0" }
+guest-assessor = { git = "ssh://git@github.com/boundless-xyz/boundless.git", tag = "v0.1.0" }
+boundless-market = { git = "ssh://git@github.com/boundless-xyz/boundless.git", tag = "v0.1.0" }
+broker = { git = "ssh://git@github.com/boundless-xyz/boundless.git", tag = "v0.1.0" }
 
 # risc0 monorepo dependencies.
 risc0-build = { version = "1.1", features = ["docker"] }

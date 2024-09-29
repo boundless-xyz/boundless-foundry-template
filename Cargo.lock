@@ -20,7 +20,7 @@ checksum = "512761e0bb2578dd7380c6baaa0f4ce03e84f95e960231d1dec8bf4d7d6e2627"
 [[package]]
 name = "aggregation-set"
 version = "0.1.0"
-source = "git+ssh://git@github.com/boundless-xyz/boundless.git?rev=9d1aedde0137e4be9fb016f422d3f4453b9e5015#9d1aedde0137e4be9fb016f422d3f4453b9e5015"
+source = "git+ssh://git@github.com/boundless-xyz/boundless.git?tag=v0.1.0#58ec568535a91e91418fdf7eb8183fb7caa07a46"
 dependencies = [
  "alloy-primitives",
  "alloy-sol-types",
@@ -1498,7 +1498,7 @@ dependencies = [
 [[package]]
 name = "boundless-market"
 version = "0.1.0"
-source = "git+ssh://git@github.com/boundless-xyz/boundless.git?rev=9d1aedde0137e4be9fb016f422d3f4453b9e5015#9d1aedde0137e4be9fb016f422d3f4453b9e5015"
+source = "git+ssh://git@github.com/boundless-xyz/boundless.git?tag=v0.1.0#58ec568535a91e91418fdf7eb8183fb7caa07a46"
 dependencies = [
  "aggregation-set",
  "alloy",
@@ -2354,7 +2354,7 @@ dependencies = [
 [[package]]
 name = "guest-aggregation-set"
 version = "0.1.0"
-source = "git+ssh://git@github.com/boundless-xyz/boundless.git?rev=9d1aedde0137e4be9fb016f422d3f4453b9e5015#9d1aedde0137e4be9fb016f422d3f4453b9e5015"
+source = "git+ssh://git@github.com/boundless-xyz/boundless.git?tag=v0.1.0#58ec568535a91e91418fdf7eb8183fb7caa07a46"
 dependencies = [
  "risc0-build",
  "risc0-build-ethereum",
@@ -2363,7 +2363,7 @@ dependencies = [
 [[package]]
 name = "guest-assessor"
 version = "0.1.0"
-source = "git+ssh://git@github.com/boundless-xyz/boundless.git?rev=9d1aedde0137e4be9fb016f422d3f4453b9e5015#9d1aedde0137e4be9fb016f422d3f4453b9e5015"
+source = "git+ssh://git@github.com/boundless-xyz/boundless.git?tag=v0.1.0#58ec568535a91e91418fdf7eb8183fb7caa07a46"
 dependencies = [
  "hex",
  "risc0-build",
@@ -2373,7 +2373,7 @@ dependencies = [
 [[package]]
 name = "guest-util"
 version = "0.1.0"
-source = "git+ssh://git@github.com/boundless-xyz/boundless.git?rev=9d1aedde0137e4be9fb016f422d3f4453b9e5015#9d1aedde0137e4be9fb016f422d3f4453b9e5015"
+source = "git+ssh://git@github.com/boundless-xyz/boundless.git?tag=v0.1.0#58ec568535a91e91418fdf7eb8183fb7caa07a46"
 dependencies = [
  "hex",
  "risc0-build",
