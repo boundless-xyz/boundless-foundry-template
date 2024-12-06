@@ -8,10 +8,10 @@ It is built around a simple smart contract, `EvenNumber`, and its associated RIS
 To build the example run:
 
 ```bash
-cargo build
-# Populate the `./lib` submodule dependancies
+# Populate the `./lib` submodule dependencies
 git submodule update --init --recursive
 forge build
+cargo build
 ```
 
 ## Test
@@ -28,12 +28,18 @@ Test the Rust code including the guest with:
 cargo test
 ```
 
-## Deploy
+## Deploy the contract on Ethereum Sepolia
+
+First, export the following env variables:
+
+```bash
+export RPC_URL=<SEPOLIA_RPC_URL> 
+export WALLET_PRIVATE_KEY=<YOUR_WALLET_PRIVATE_KEY>
+```
 
 To deploy the `EvenNumber` contract run:
 
 ```bash
-source .env
 forge script contracts/scripts/Deploy.s.sol --rpc-url ${RPC_URL:?} --broadcast -vv
 ```
 
@@ -48,22 +54,26 @@ export EVEN_NUMBER_ADDRESS=#COPY EVEN NUMBER ADDRESS FROM DEPLOY LOGS
 > You can also use the following command to set the contract address if you have [`jq`][jq] installed:
 >
 > ```bash
-> export EVEN_NUMBER_ADDRESS=$(jq -re '.transactions[] | select(.contractName == "EvenNumber") | .contractAddress' ./broadcast/Deploy.s.sol/31337/run-latest.json)
+> export EVEN_NUMBER_ADDRESS=$(jq -re '.transactions[] | select(.contractName == "EvenNumber") | .contractAddress' ./broadcast/Deploy.s.sol/11155111/run-latest.json)
 > ```
 
-## Run the example
+## Run the example on Ethereum Sepolia
 
 > This example must be run against a deployment of the Boundless market.
-> See the [local devnet doc][local-devnet-guide] for info on running one locally.
-> Environment variables for connecting to and interacting with the network are defined in a [.env file](./.env).
+
+First, export the following env variables:
+
+```bash
+export BOUNDLESS_MARKET_ADDRESS="0x01e4130C977b39aaa28A744b8D3dEB23a5297654"
+export SET_VERIFIER_ADDRESS="0xea6a0Ca4BfD0A6C43081D57672b3B6D43B69265F"
+export PINATA_JWT=<YOUR_PINATA_JWT>
+```
 
 To run the example run:
 
 ```bash
-RISC0_DEV_MODE=1 RUST_LOG=info cargo run --bin app -- --even-number-address ${EVEN_NUMBER_ADDRESS:?} --number 4
+RUST_LOG=info cargo run --bin app -- --even-number-address ${EVEN_NUMBER_ADDRESS:?} --number 4
 ```
 
-<!-- TODO: Update link once docs are public -->
-[local-devnet-guide]: https://silver-guacamole-kgzmnmn.pages.github.io/broker/local_devnet.html
 [jq]: https://jqlang.github.io/jq/
 [boundless-homepage]: https://beboundless.xyz

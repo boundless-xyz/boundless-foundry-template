@@ -10,7 +10,7 @@ use alloy::{
     signers::local::PrivateKeySigner,
     sol_types::SolValue,
 };
-use anyhow::{Context, Result};
+use anyhow::{bail, Context, Result};
 use boundless_market::{
     client::ClientBuilder,
     contracts::{Input, Offer, Predicate, ProofRequest, Requirements},
@@ -68,7 +68,11 @@ async fn main() -> Result<()> {
         .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
         .init();
 
-    dotenvy::dotenv()?;
+    match dotenvy::dotenv() {
+        Ok(path) => tracing::debug!("Loaded environment variables from {:?}", path),
+        Err(e) if e.not_found() => tracing::debug!("No .env file found"),
+        Err(e) => bail!("failed to load .env file: {}", e),
+    }
     let args = Args::parse();
 
     // Create a Boundless client from the provided parameters.
@@ -147,15 +151,15 @@ async fn main() -> Result<()> {
         );
 
     // Send the request and wait for it to be completed.
-    let request_id = boundless_client.submit_request(&request).await?;
-    tracing::info!("Request {} submitted", request_id);
+    let (request_id, expires_at) = boundless_client.submit_request(&request).await?;
+    tracing::info!("Request 0x{request_id:x} submitted");
 
     // Wait for the request to be fulfilled by the market, returning the journal and seal.
-    tracing::info!("Waiting for request {} to be fulfilled", request_id);
+    tracing::info!("Waiting for 0x{request_id:x} to be fulfilled");
     let (_journal, seal) = boundless_client
-        .wait_for_request_fulfillment(request_id, Duration::from_secs(5), request.expires_at())
+        .wait_for_request_fulfillment(request_id, Duration::from_secs(5), expires_at)
         .await?;
-    tracing::info!("Request {} fulfilled", request_id);
+    tracing::info!("Request 0x{request_id:x} fulfilled");
 
     // Interact with the EvenNumber contract by calling the set function with our number and
     // the seal (i.e. proof) returned by the market.
