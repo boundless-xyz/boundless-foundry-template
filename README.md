@@ -73,7 +73,8 @@ export EVEN_NUMBER_ADDRESS=#COPY EVEN NUMBER ADDRESS FROM DEPLOY LOGS
 
 ### Run the example on Sepolia
 
-The example app uses the [Pinata](https://pinata.cloud/) IPFS pinning service to host the zkVM guest ELF binaries, and for inputs.
+The example app uploads the zkVM guest ELF binary and input to a public URL using a storage provider.
+IPFS pinning via [Pinata](https://pinata.cloud/) is a supported and easy to set up option.
 You can sign up with their free tier, which will have plenty of quota to get started.
 You can also send inputs directly in your transaction, and can host your guest on any public HTTP service.
 
