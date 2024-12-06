@@ -19,6 +19,7 @@ import {Test} from "forge-std/Test.sol";
 import {RiscZeroCheats} from "risc0/test/RiscZeroCheats.sol";
 import {Receipt as RiscZeroReceipt} from "risc0/IRiscZeroVerifier.sol";
 import {RiscZeroMockVerifier} from "risc0/test/RiscZeroMockVerifier.sol";
+import {VerificationFailed} from "risc0/IRiscZeroVerifier.sol";
 import {EvenNumber} from "../src/EvenNumber.sol";
 import {ImageID} from "../src/ImageID.sol";
 
@@ -46,5 +47,13 @@ contract EvenNumberTest is RiscZeroCheats, Test {
 
         evenNumber.set(number, receipt.seal);
         assertEq(evenNumber.get(), number);
+    }
+
+    // Try using a proof for the evenness of 4 to set 1 on the contract.
+    function test_RejectInvalidProof() public {
+        RiscZeroReceipt memory receipt = verifier.mockProve(ImageID.IS_EVEN_ID, sha256(abi.encode(4)));
+
+        vm.expectRevert(VerificationFailed.selector);
+        evenNumber.set(1, receipt.seal);
     }
 }
