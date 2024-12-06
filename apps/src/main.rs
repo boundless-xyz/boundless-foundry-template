@@ -14,6 +14,7 @@ use anyhow::{Context, Result};
 use boundless_market::{
     client::ClientBuilder,
     contracts::{Input, Offer, Predicate, ProofRequest, Requirements},
+    input::InputBuilder,
     storage::StorageProviderConfig,
 };
 use clap::Parser;
@@ -76,7 +77,7 @@ async fn main() -> Result<()> {
         .with_boundless_market_address(args.boundless_market_address)
         .with_set_verifier_address(args.set_verifier_address)
         .with_order_stream_url(args.order_stream_url)
-        .with_storage_provider_config(&args.storage_config)
+        .with_storage_provider_config(Some(args.storage_config))
         .with_private_key(args.wallet_private_key)
         .build()
         .await?;
@@ -87,7 +88,9 @@ async fn main() -> Result<()> {
 
     // Encode the input and upload it to the storage provider.
     tracing::info!("Number to publish: {}", args.number);
-    let input = U256::from(args.number).abi_encode();
+    let input = InputBuilder::new()
+        .write_slice(&U256::from(args.number).abi_encode())
+        .build();
     let input_url = boundless_client.upload_input(&input).await?;
     tracing::info!("Uploaded input to {}", input_url);
 

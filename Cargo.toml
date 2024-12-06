@@ -14,13 +14,11 @@ guests = { path = "./guests" }
 # boundless monorepo dependencies.
 # TODO: pin to correct version once released 
 # TODO(#4): while the repo is private, using the SSH URL and `net.git-fetch-with-cli = true` is required
-guest-assessor = { git = "ssh://git@github.com/boundless-xyz/boundless.git" }
-boundless-market = { git = "ssh://git@github.com/boundless-xyz/boundless.git" }
-broker = { git = "ssh://git@github.com/boundless-xyz/boundless.git" }
+boundless-market = { git = "ssh://git@github.com/boundless-xyz/boundless.git", branch = "angelo/bump-deps" }
 
 # risc0 monorepo dependencies.
-risc0-build = { version = "1.2.0-rc.1", features = ["docker"] }
-risc0-zkvm = { version = "1.2.0-rc.1", default-features = false }
+risc0-build = { version = "1.2.0", features = ["docker"] }
+risc0-zkvm = { version = "1.2.0", default-features = false }
 
 # risc0-ethereum dependencies.
 # TODO: pin to correct version once released 
