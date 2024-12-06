@@ -28,14 +28,28 @@ Test the Rust code including the guest with:
 cargo test
 ```
 
-## Deploy the contract on Ethereum Sepolia
+## Deploy
 
-First, export the following env variables:
+### Set up your environment
+
+Export the following env variables, pointing to the deployed contracts on [Sepolia][sepolia]:
+
+> You can find the latest deployment information at [docs.beboundless.xyz/deployments](https://docs.beboundless.xyz/deployments)
+
+```bash
+export BOUNDLESS_MARKET_ADDRESS="0x01e4130C977b39aaa28A744b8D3dEB23a5297654"
+export VERIFIER_ROUTER_ADDRESS="0x925d8331ddc0a1F0d96E68CF073DFE1d92b69187"
+export SET_VERIFIER_ADDRESS="0xea6a0Ca4BfD0A6C43081D57672b3B6D43B69265F"
+```
+
+And export the following env variables with your test wallet private key and preferred RPC provider.
 
 ```bash
 export RPC_URL="https://ethereum-sepolia-rpc.publicnode.com"
 export WALLET_PRIVATE_KEY="YOUR_WALLET_PRIVATE_KEY"
 ```
+
+### Deploy the contract on Sepolia
 
 To deploy the `EvenNumber` contract run:
 
@@ -57,17 +71,7 @@ export EVEN_NUMBER_ADDRESS=#COPY EVEN NUMBER ADDRESS FROM DEPLOY LOGS
 > export EVEN_NUMBER_ADDRESS=$(jq -re '.transactions[] | select(.contractName == "EvenNumber") | .contractAddress' ./broadcast/Deploy.s.sol/11155111/run-latest.json)
 > ```
 
-## Run the example on Ethereum Sepolia
-
-First, export the following env variables, pointing to the deployed contracts on Sepolia:
-
-> You can find the latest deployment information at [docs.beboundless.xyz/deployments](https://docs.beboundless.xyz/deployments)
-
-```bash
-export BOUNDLESS_MARKET_ADDRESS="0x01e4130C977b39aaa28A744b8D3dEB23a5297654"
-export VERIFIER_ROUTER_ADDRESS="0x925d8331ddc0a1F0d96E68CF073DFE1d92b69187"
-export SET_VERIFIER_ADDRESS="0xea6a0Ca4BfD0A6C43081D57672b3B6D43B69265F"
-```
+### Run the example on Sepolia
 
 The example app uses the [Pinata](https://pinata.cloud/) IPFS pinning service to host the zkVM guest ELF binaries, and for inputs.
 You can sign up with their free tier, which will have plenty of quota to get started.
@@ -85,3 +89,4 @@ RUST_LOG=info cargo run --bin app -- --even-number-address ${EVEN_NUMBER_ADDRESS
 
 [jq]: https://jqlang.github.io/jq/
 [boundless-homepage]: https://beboundless.xyz
+[sepolia]: https://ethereum.org/en/developers/docs/networks/#sepolia
