@@ -14,6 +14,7 @@ guests = { path = "./guests" }
 # boundless monorepo dependencies.
 # TODO: pin to correct version once released 
 # TODO(#4): while the repo is private, using the SSH URL and `net.git-fetch-with-cli = true` is required
+# remove .cargo/config.toml when we change this
 boundless-market = { git = "ssh://git@github.com/boundless-xyz/boundless.git" }
 
 # risc0 monorepo dependencies.
