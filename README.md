@@ -33,8 +33,8 @@ cargo test
 First, export the following env variables:
 
 ```bash
-export RPC_URL=<SEPOLIA_RPC_URL> 
-export WALLET_PRIVATE_KEY=<YOUR_WALLET_PRIVATE_KEY>
+export RPC_URL="https://ethereum-sepolia-rpc.publicnode.com"
+export WALLET_PRIVATE_KEY="YOUR_WALLET_PRIVATE_KEY"
 ```
 
 To deploy the `EvenNumber` contract run:
