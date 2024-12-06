@@ -18,13 +18,13 @@ cargo build
 
 Test the Solidity smart contracts with:
 
-```
+```bash
 forge test -vvv
 ```
 
 Test the Rust code including the guest with:
 
-```
+```bash
 cargo test
 ```
 
@@ -59,14 +59,21 @@ export EVEN_NUMBER_ADDRESS=#COPY EVEN NUMBER ADDRESS FROM DEPLOY LOGS
 
 ## Run the example on Ethereum Sepolia
 
-> This example must be run against a deployment of the Boundless market.
+First, export the following env variables, pointing to the deployed contracts on Sepolia:
 
-First, export the following env variables:
+> You can find the latest deployment information at [docs.beboundless.xyz](https://docs.beboundless.xyz/)
 
 ```bash
 export BOUNDLESS_MARKET_ADDRESS="0x01e4130C977b39aaa28A744b8D3dEB23a5297654"
-export SET_VERIFIER_ADDRESS="0xea6a0Ca4BfD0A6C43081D57672b3B6D43B69265F"
-export PINATA_JWT=<YOUR_PINATA_JWT>
+export VERIFIER_ADDRESS="0xea6a0Ca4BfD0A6C43081D57672b3B6D43B69265F"
+```
+
+The example app uses the [Pinata](https://pinata.cloud/) IPFS pinning service to host the zkVM guest ELF binaries, and for inputs.
+You can sign up with their free tier, which will have plenty of quota to get started.
+You can also send inputs directly in your transaction, and can host your guest on any public HTTP service.
+
+```bash
+export PINATA_JWT="YOUR_PINATA_JWT"
 ```
 
 To run the example run:
