@@ -196,7 +196,7 @@ async fn main() -> Result<()> {
         .get()
         .call()
         .await
-        .with_context(|| format!("failed to get number"))?
+        .context("failed to get number from contract")?
         ._0;
     tracing::info!(
         "Number for address: {:?} is set to {:?}",
