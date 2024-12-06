@@ -65,6 +65,7 @@ First, export the following env variables, pointing to the deployed contracts on
 
 ```bash
 export BOUNDLESS_MARKET_ADDRESS="0x01e4130C977b39aaa28A744b8D3dEB23a5297654"
+export VERIFIER_ROUTER_ADDRESS="0x925d8331ddc0a1F0d96E68CF073DFE1d92b69187"
 export SET_VERIFIER_ADDRESS="0xea6a0Ca4BfD0A6C43081D57672b3B6D43B69265F"
 ```
 
