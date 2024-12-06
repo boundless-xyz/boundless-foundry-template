@@ -61,11 +61,11 @@ export EVEN_NUMBER_ADDRESS=#COPY EVEN NUMBER ADDRESS FROM DEPLOY LOGS
 
 First, export the following env variables, pointing to the deployed contracts on Sepolia:
 
-> You can find the latest deployment information at [docs.beboundless.xyz](https://docs.beboundless.xyz/)
+> You can find the latest deployment information at [docs.beboundless.xyz/deployments](https://docs.beboundless.xyz/deployments)
 
 ```bash
 export BOUNDLESS_MARKET_ADDRESS="0x01e4130C977b39aaa28A744b8D3dEB23a5297654"
-export VERIFIER_ADDRESS="0xea6a0Ca4BfD0A6C43081D57672b3B6D43B69265F"
+export SET_VERIFIER_ADDRESS="0xea6a0Ca4BfD0A6C43081D57672b3B6D43B69265F"
 ```
 
 The example app uses the [Pinata](https://pinata.cloud/) IPFS pinning service to host the zkVM guest ELF binaries, and for inputs.
