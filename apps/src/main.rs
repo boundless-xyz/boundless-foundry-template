@@ -20,7 +20,7 @@ use alloy::{
     signers::local::PrivateKeySigner,
     sol_types::SolValue,
 };
-use anyhow::{bail, Context, Result};
+use anyhow::{bail, ensure, Context, Result};
 use boundless_market::{
     client::ClientBuilder,
     contracts::{Input, Offer, Predicate, ProofRequest, Requirements},
@@ -55,12 +55,15 @@ struct Args {
     /// Private key used to interact with the EvenNumber contract.
     #[clap(short, long, env)]
     wallet_private_key: PrivateKeySigner,
-    /// URL of the offchain order stream endpoint.
-    #[clap(short, long, env)]
+    /// Submit the request offchain via the provided order stream service url.
+    #[clap(short, long, requires = "order_stream_url")]
+    offchain: bool,
+    /// Offchain order stream service URL to submit offchain requests to.
+    #[clap(long, env)]
     order_stream_url: Option<Url>,
     /// Storage provider to use
     #[clap(flatten)]
-    storage_config: StorageProviderConfig,
+    storage_config: Option<StorageProviderConfig>,
     /// Address of the EvenNumber contract.
     #[clap(short, long, env)]
     even_number_address: Address,
@@ -90,13 +93,17 @@ async fn main() -> Result<()> {
         .with_rpc_url(args.rpc_url)
         .with_boundless_market_address(args.boundless_market_address)
         .with_set_verifier_address(args.set_verifier_address)
-        .with_order_stream_url(args.order_stream_url)
-        .with_storage_provider_config(Some(args.storage_config))
+        .with_order_stream_url(args.offchain.then_some(args.order_stream_url).flatten())
+        .with_storage_provider_config(args.storage_config)
         .with_private_key(args.wallet_private_key)
         .build()
         .await?;
 
     // Upload the ELF to the storage provider so that it can be fetched by the market.
+    ensure!(
+        boundless_client.storage_provider.is_some(),
+        "a storage provider is required to upload the zkVM guest ELF"
+    );
     let image_url = boundless_client.upload_image(IS_EVEN_ELF).await?;
     tracing::info!("Uploaded image to {}", image_url);
 
@@ -105,8 +112,16 @@ async fn main() -> Result<()> {
     let input = InputBuilder::new()
         .write_slice(&U256::from(args.number).abi_encode())
         .build();
-    let input_url = boundless_client.upload_input(&input).await?;
-    tracing::info!("Uploaded input to {}", input_url);
+
+    // Upload the input and input a URL instead if the input is more than 2 kB, as a rule of thumb.
+    let request_input = if input.len() > 2 << 10 {
+        let input_url = boundless_client.upload_input(&input).await?;
+        tracing::info!("Uploaded input to {}", input_url);
+        Input::url(input_url)
+    } else {
+        tracing::info!("Sending input inline with request");
+        Input::inline(input.clone())
+    };
 
     // Dry run the ELF with the input to get the journal and cycle count.
     // This can be useful to estimate the cost of the proving request.
@@ -138,7 +153,7 @@ async fn main() -> Result<()> {
     //   request is not fulfilled before the timeout, the prover can be slashed.
     let request = ProofRequest::default()
         .with_image_url(&image_url)
-        .with_input(Input::url(&input_url))
+        .with_input(request_input)
         .with_requirements(Requirements::new(
             IS_EVEN_ID,
             Predicate::digest_match(journal.digest()),
