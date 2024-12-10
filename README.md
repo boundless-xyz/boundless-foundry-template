@@ -10,8 +10,8 @@ To build the example run:
 ```bash
 # Populate the `./lib` submodule dependencies
 git submodule update --init --recursive
-forge build
 cargo build
+forge build
 ```
 
 ## Test
