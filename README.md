@@ -8,9 +8,9 @@ It is built around a simple smart contract, `EvenNumber`, and its associated RIS
 To build the example run:
 
 ```bash
-cargo build
-# Populate the `./lib` submodule dependancies
+# Populate the `./lib` submodule dependencies
 git submodule update --init --recursive
+cargo build
 forge build
 ```
 
@@ -18,22 +18,35 @@ forge build
 
 Test the Solidity smart contracts with:
 
-```
+```bash
 forge test -vvv
 ```
 
 Test the Rust code including the guest with:
 
-```
+```bash
 cargo test
 ```
 
 ## Deploy
 
+### Set up your environment
+
+Export your Sepolia testnet wallet private key as an environment variable:
+
+```bash
+export WALLET_PRIVATE_KEY="YOUR_WALLET_PRIVATE_KEY"
+```
+
+A [`.env`](./.env) file is provided with the Boundless contract deployment information for Sepolia.
+The example app reads from this `.env` file automatically.
+
+### Deploy the contract on Sepolia
+
 To deploy the `EvenNumber` contract run:
 
 ```bash
-source .env
+. ./.env # load the environment variables from the .env file for deployment
 forge script contracts/scripts/Deploy.s.sol --rpc-url ${RPC_URL:?} --broadcast -vv
 ```
 
@@ -48,22 +61,26 @@ export EVEN_NUMBER_ADDRESS=#COPY EVEN NUMBER ADDRESS FROM DEPLOY LOGS
 > You can also use the following command to set the contract address if you have [`jq`][jq] installed:
 >
 > ```bash
-> export EVEN_NUMBER_ADDRESS=$(jq -re '.transactions[] | select(.contractName == "EvenNumber") | .contractAddress' ./broadcast/Deploy.s.sol/31337/run-latest.json)
+> export EVEN_NUMBER_ADDRESS=$(jq -re '.transactions[] | select(.contractName == "EvenNumber") | .contractAddress' ./broadcast/Deploy.s.sol/11155111/run-latest.json)
 > ```
 
-## Run the example
+### Run the example on Sepolia
 
-> This example must be run against a deployment of the Boundless market.
-> See the [local devnet doc][local-devnet-guide] for info on running one locally.
-> Environment variables for connecting to and interacting with the network are defined in a [.env file](./.env).
+The example app uploads the zkVM guest ELF binary and input to a public URL using a storage provider.
+IPFS pinning via [Pinata](https://pinata.cloud/) is a supported and easy to set up option.
+You can sign up with their free tier, which will have plenty of quota to get started.
+You can also send inputs directly in your transaction, and can host your guest on any public HTTP service.
+
+```bash
+export PINATA_JWT="YOUR_PINATA_JWT"
+```
 
 To run the example run:
 
 ```bash
-RISC0_DEV_MODE=1 RUST_LOG=info cargo run --bin app -- --even-number-address ${EVEN_NUMBER_ADDRESS:?} --number 4
+RUST_LOG=info cargo run --bin app -- --even-number-address ${EVEN_NUMBER_ADDRESS:?} --number 4
 ```
 
-<!-- TODO: Update link once docs are public -->
-[local-devnet-guide]: https://silver-guacamole-kgzmnmn.pages.github.io/broker/local_devnet.html
 [jq]: https://jqlang.github.io/jq/
 [boundless-homepage]: https://beboundless.xyz
+[sepolia]: https://ethereum.org/en/developers/docs/networks/#sepolia
