@@ -32,7 +32,7 @@ cargo test
 
 ### Set up your environment
 
-Export the following env variables with your test wallet private key and preferred RPC provider.
+Export your Sepolia testnet wallet private key as an environment variable:
 
 ```bash
 export WALLET_PRIVATE_KEY="YOUR_WALLET_PRIVATE_KEY"
