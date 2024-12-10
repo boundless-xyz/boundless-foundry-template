@@ -113,7 +113,7 @@ async fn main() -> Result<()> {
         .write_slice(&U256::from(args.number).abi_encode())
         .build();
 
-    // Upload the input and input a URL instead if the input is more than 2 kB, as a rule of thumb.
+    // If the input exceeds 2 kB, upload the input and provide its URL instead, as a rule of thumb.
     let request_input = if input.len() > 2 << 10 {
         let input_url = boundless_client.upload_input(&input).await?;
         tracing::info!("Uploaded input to {}", input_url);
