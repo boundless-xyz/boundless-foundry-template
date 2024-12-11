@@ -12,7 +12,6 @@ concurrency:
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   RUST_BACKTRACE: "1"
-  RISC0_MONOREPO_REF: "release-1.2"
 
 jobs:
     # see: https://github.com/orgs/community/discussions/26822
@@ -52,8 +51,6 @@ jobs:
 
       - name: risczero toolchain install
         uses: risc0/risc0-ethereum/.github/actions/cargo-risczero-install@release-1.2
-        with:
-          ref: ${{ env.RISC0_MONOREPO_REF }}
 
       - name: cargo build
         run: cargo build
