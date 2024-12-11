@@ -53,6 +53,7 @@ forge script contracts/scripts/Deploy.s.sol --rpc-url ${RPC_URL:?} --broadcast -
 Save the `EvenNumber` contract address to an env variable:
 
 <!-- TODO: Update me -->
+
 ```bash
 # First contract deployed and top of logs is EvenNumber
 export EVEN_NUMBER_ADDRESS=#COPY EVEN NUMBER ADDRESS FROM DEPLOY LOGS
