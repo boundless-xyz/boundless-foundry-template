@@ -56,7 +56,7 @@ jobs:
           version: '=1.10.8'
           locked: true
 
-      - name: install r0vm
+      - name: install cargo-risczero
         run: cargo binstall -y --force cargo-risczero@1.2.0
 
       - name: install risc0 toolchain
