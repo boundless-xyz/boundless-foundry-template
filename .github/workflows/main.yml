@@ -9,22 +9,18 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
-permissions:
-  id-token: write
-  contents: read
-  pull-requests: read
-
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  RUST_BACKTRACE: "1"
+  RISC0_MONOREPO_REF: "release-1.2"
 
 jobs:
     # see: https://github.com/orgs/community/discussions/26822
   main-status-check:
     if: always()
     needs:
-      - check
       - test
-      - format
+      - lint
 
     runs-on: ubuntu-latest
     steps:
@@ -35,8 +31,12 @@ jobs:
         run: exit 1
 
   test:
-    runs-on: [self-hosted, Linux, X64, prod, cpu]
+    runs-on: ubuntu-latest
     steps:
+      # This is a workaround from: https://github.com/actions/checkout/issues/590#issuecomment-970586842
+      - name: checkout dummy commit (submodule bug workaround)
+        run: "git checkout -f $(git -c user.name=x -c user.email=x@x commit-tree $(git hash-object -t tree /dev/null) < /dev/null) || :"
+      
       - name: checkout code
         uses: actions/checkout@v4
         with:
@@ -50,14 +50,10 @@ jobs:
         with:
           toolchain: '1.81'
 
-      - name: setup sccache + s3
-        uses: ./.github/actions/sccache
-
-      - name: install cargo risczero
-        uses: ./.github/actions/bininstall-risc0
+      - name: risczero toolchain install
+        uses: risc0/risc0-ethereum/.github/actions/cargo-risczero-install@release-1.2
         with:
-          risczero-version: '1.2.0'
-          toolchain-version: 'r0.1.81.0'
+          ref: ${{ env.RISC0_MONOREPO_REF }}
 
       - name: cargo build
         run: cargo build
@@ -65,19 +61,16 @@ jobs:
       - name: forge build
         run: forge build
 
+      - name: cargo test
+        run: cargo test
+
       - name: forge test
         run: forge test -vvv
         env:
           RISC0_DEV_MODE: "true"
 
-      - name: cargo test
-        run: cargo test
-
-      - name: sccache stats
-        run: sccache --show-stats
-
-  check:
-    runs-on: [self-hosted, Linux, X64, prod, cpu]
+  lint:
+    runs-on: ubuntu-latest
     steps:
       - name: checkout code
         uses: actions/checkout@v4
@@ -99,15 +92,6 @@ jobs:
         with:
           toolchain: '1.81'
 
-      - name: setup sccache + s3
-        uses: ./.github/actions/sccache
-
-      - name: install cargo risczero
-        uses: ./.github/actions/bininstall-risc0
-        with:
-          risczero-version: '1.2.0'
-          toolchain-version: 'r0.1.81.0'
-
       - name: install cargo-sort
         uses: baptiste0928/cargo-install@904927dbe77864e0f2281519fe9d5bd097a220b3
         with:
@@ -115,11 +99,28 @@ jobs:
           version: "=1.0.9"
           locked: true
 
+      - name: install cargo-binstall
+        uses: baptiste0928/cargo-install@904927dbe77864e0f2281519fe9d5bd097a220b3
+        with:
+          crate: cargo-binstall
+          version: '=1.10.8'
+          locked: true
+
+      - name: install dprint
+        run: cargo binstall -y --force dprint@0.47.2
+
+      - name: dprint check
+        run: dprint check
+
       - name: cargo Sort
         run: cargo sort --workspace --check
 
       - name: cargo format
         run: cargo fmt --all -- --check
+
+      - name: lint guest rust code
+        working-directory: guests/is-even
+        run: cargo fmt --all --check
 
       - name: license check
         run: python license-check.py
@@ -135,30 +136,5 @@ jobs:
           RISC0_SKIP_BUILD: true
           RISC0_SKIP_BUILD_KERNEL: true,
 
-      - name: cargo check
-        run: cargo check --all-targets
-
       - name: forge fmt
-        run: forge fmt --check
-
-      - name: forge check
-        run: forge check
-
-      - name: sccache stats
-        run: sccache --show-stats
-
-  format:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: install cargo-binstall
-        uses: baptiste0928/cargo-install@904927dbe77864e0f2281519fe9d5bd097a220b3
-        with:
-          crate: cargo-binstall
-          version: '=1.10.8'
-          locked: true
-
-      - run: cargo binstall -y --force dprint@0.47.2
-
-      - run: dprint check
+        run: forge fmt --check      
