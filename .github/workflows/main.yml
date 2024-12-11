@@ -48,9 +48,16 @@ jobs:
         uses: risc0/risc0/.github/actions/rustup@release-1.2
         with:
           toolchain: '1.81'
+      
+      - name: install cargo-binstall
+        uses: baptiste0928/cargo-install@904927dbe77864e0f2281519fe9d5bd097a220b3
+        with:
+          crate: cargo-binstall
+          version: '=1.10.8'
+          locked: true
 
       - name: risczero toolchain install
-        uses: risc0/risc0-ethereum/.github/actions/cargo-risczero-install@release-1.2
+        run: cargo binstall -y --force cargo-risczero@1.2.0
 
       - name: cargo build
         run: cargo build
