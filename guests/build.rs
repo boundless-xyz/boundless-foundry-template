@@ -74,6 +74,24 @@ fn git_submodule_init() {
     }
 }
 
+/// Update and initialize git submodules.
+///
+/// # Warnings
+/// Prints a warning to stderr if the update fails, but does not interrupt the build process.
+fn git_submodule_update() {
+    let output = Command::new("git")
+        .args(["submodule", "update", "--init"])
+        .output()
+        .expect("failed to run git submodule update --init in methods/build.rs");
+
+    if !output.status.success() {
+        eprintln!(
+            "WARNING: git submodule update failed (methods/build.rs): {}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+    }
+}
+
 /// Checks and reports the status of all git submodules in the project.
 /// Runs on every build to inform developers about the state of their submodules.
 ///
@@ -126,9 +144,8 @@ fn check_submodule_state() {
     }
 
     if has_uninitialized {
-        println!(
-            "cargo:warning=to initialize missing submodules, run: git submodule update --init"
-        );
+        println!("cargo:warning=running: git submodule update --init");
+        git_submodule_update();
     }
 
     if has_local_changes {
