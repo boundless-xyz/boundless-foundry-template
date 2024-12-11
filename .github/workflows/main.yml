@@ -141,6 +141,9 @@ jobs:
       - name: forge fmt
         run: forge fmt --check
 
+      - name: forge check
+        run: forge check
+
       - name: sccache stats
         run: sccache --show-stats
 
