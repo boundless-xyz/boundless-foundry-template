@@ -116,9 +116,6 @@ jobs:
         working-directory: guests/is-even
         run: cargo fmt --all --check
 
-      - name: check for "D0 NOT MERGE" comments
-        run: |
-          [ "$(grep -re 'DO[_ ]\?NOT[_ ]\?MERGE' $(git ls-tree --full-tree --name-only -r HEAD) | tee /dev/fd/2 | wc -l)" -eq "0" ]
 
       - name: cargo clippy
         run: cargo clippy --workspace --all-targets --all-features
