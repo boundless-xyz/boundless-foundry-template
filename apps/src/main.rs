@@ -23,13 +23,13 @@ use alloy::{
 use anyhow::{bail, ensure, Context, Result};
 use boundless_market::{
     client::ClientBuilder,
-    contracts::{Input, Offer, Predicate, ProofRequest, Requirements},
+    contracts::{Input, Offer, Predicate, ProofRequestBuilder, Requirements},
     input::InputBuilder,
     storage::StorageProviderConfig,
 };
 use clap::Parser;
 use guests::{IS_EVEN_ELF, IS_EVEN_ID};
-use risc0_zkvm::{default_executor, sha::Digestible, ExecutorEnv};
+use risc0_zkvm::{default_executor, sha::Digestible};
 use url::Url;
 
 /// Timeout for the transaction to be confirmed.
@@ -109,27 +109,18 @@ async fn main() -> Result<()> {
 
     // Encode the input and upload it to the storage provider.
     tracing::info!("Number to publish: {}", args.number);
-    let input = InputBuilder::new()
-        .write_slice(&U256::from(args.number).abi_encode())
-        .build();
+    let input_builder = InputBuilder::new().write_slice(&U256::from(args.number).abi_encode());
+    tracing::info!("input builder: {:?}", input_builder);
 
-    // If the input exceeds 2 kB, upload the input and provide its URL instead, as a rule of thumb.
-    let request_input = if input.len() > 2 << 10 {
-        let input_url = boundless_client.upload_input(&input).await?;
-        tracing::info!("Uploaded input to {}", input_url);
-        Input::url(input_url)
-    } else {
-        tracing::info!("Sending input inline with request");
-        Input::inline(input.clone())
-    };
+    let input_guest = input_builder.clone().build_env().unwrap();
+    let input_guest_bytes = input_guest.encode().unwrap();
 
     // Dry run the ELF with the input to get the journal and cycle count.
     // This can be useful to estimate the cost of the proving request.
     // It can also be useful to ensure the guest can be executed correctly and we do not send into
     // the market unprovable proving requests. If you have a different mechanism to get the expected
     // journal and set a price, you can skip this step.
-    let env = ExecutorEnv::builder().write_slice(&input).build()?;
-    let session_info = default_executor().execute(env, IS_EVEN_ELF)?;
+    let session_info = default_executor().execute(input_guest.try_into().unwrap(), IS_EVEN_ELF)?;
     let mcycles_count = session_info
         .segments
         .iter()
@@ -151,8 +142,18 @@ async fn main() -> Result<()> {
     //   the maxPrice, starting from the the bidding start;
     // - the lockin price: the price at which the request can be locked in by a prover, if the
     //   request is not fulfilled before the timeout, the prover can be slashed.
-    let request = ProofRequest::default()
-        .with_image_url(&image_url)
+    // If the input exceeds 2 kB, upload the input and provide its URL instead, as a rule of thumb.
+    let request_input = if input_guest_bytes.len() > 2 << 10 {
+        let input_url = boundless_client.upload_input(&input_guest_bytes).await?;
+        tracing::info!("Uploaded input to {}", input_url);
+        Input::url(input_url)
+    } else {
+        tracing::info!("Sending input inline with request");
+        Input::inline(input_guest_bytes.clone())
+    };
+
+    let request = ProofRequestBuilder::new()
+        .with_image_url(image_url.to_string())
         .with_input(request_input)
         .with_requirements(Requirements::new(
             IS_EVEN_ID,
@@ -173,7 +174,9 @@ async fn main() -> Result<()> {
                 // the request and does not fulfill it before the timeout, the prover can be
                 // slashed.
                 .with_timeout(1000),
-        );
+        )
+        .build()
+        .unwrap();
 
     // Send the request and wait for it to be completed.
     let (request_id, expires_at) = boundless_client.submit_request(&request).await?;
