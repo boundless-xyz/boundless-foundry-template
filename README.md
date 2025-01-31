@@ -28,7 +28,7 @@ Test the Rust code including the guest with:
 cargo test
 ```
 
-## Deploy
+## Deploy to Testnet
 
 ### Set up your environment
 
@@ -38,10 +38,16 @@ Export your Sepolia testnet wallet private key as an environment variable:
 export WALLET_PRIVATE_KEY="YOUR_WALLET_PRIVATE_KEY"
 ```
 
+To allow provers to access your zkVM guest binary, it must be uploaded to a public URL. For this example we will upload to IPFS using Pinata. Pinata has a free tier with plenty of quota to get started. Sign up at [[Pinata](https://pinata.cloud/)](https://pinata.cloud/), generate an API key, and set the JWT as an environment variable:
+
+```bash
+export PINATA_JWT="YOUR_PINATA_JWT"
+```
+
 A [`.env`](./.env) file is provided with the Boundless contract deployment information for Sepolia.
 The example app reads from this `.env` file automatically.
 
-### Deploy the contract on Sepolia
+### Deploy the contract
 
 To deploy the `EvenNumber` contract run:
 
@@ -65,18 +71,12 @@ export EVEN_NUMBER_ADDRESS=#COPY EVEN NUMBER ADDRESS FROM DEPLOY LOGS
 > export EVEN_NUMBER_ADDRESS=$(jq -re '.transactions[] | select(.contractName == "EvenNumber") | .contractAddress' ./broadcast/Deploy.s.sol/11155111/run-latest.json)
 > ```
 
-### Run the example on Sepolia
+### Run the example
 
-The example app uploads the zkVM guest ELF binary and input to a public URL using a storage provider.
-IPFS pinning via [Pinata](https://pinata.cloud/) is a supported and easy to set up option.
-You can sign up with their free tier, which will have plenty of quota to get started.
-You can also send inputs directly in your transaction, and can host your guest on any public HTTP service.
+The [example app](apps/src/main.rs) will upload your zkVM guest to IPFS, submit a request to the market for a proof that "4" is an even number, wait for the request to be fulfilled, and then submit that proof to the EvenNumber contract, setting the value to "4".
 
-```bash
-export PINATA_JWT="YOUR_PINATA_JWT"
-```
 
-To run the example run:
+To run the example:
 
 ```bash
 RUST_LOG=info cargo run --bin app -- --even-number-address ${EVEN_NUMBER_ADDRESS:?} --number 4
