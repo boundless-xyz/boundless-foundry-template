@@ -112,15 +112,15 @@ async fn main() -> Result<()> {
     let input_builder = InputBuilder::new().write_slice(&U256::from(args.number).abi_encode());
     tracing::info!("input builder: {:?}", input_builder);
 
-    let input_guest = input_builder.clone().build_env().unwrap();
-    let input_guest_bytes = input_guest.encode().unwrap();
+    let guest_env = input_builder.clone().build_env()?;
+    let guest_env_bytes = guest_env.encode()?;
 
     // Dry run the ELF with the input to get the journal and cycle count.
     // This can be useful to estimate the cost of the proving request.
     // It can also be useful to ensure the guest can be executed correctly and we do not send into
     // the market unprovable proving requests. If you have a different mechanism to get the expected
     // journal and set a price, you can skip this step.
-    let session_info = default_executor().execute(input_guest.try_into().unwrap(), IS_EVEN_ELF)?;
+    let session_info = default_executor().execute(guest_env.try_into().unwrap(), IS_EVEN_ELF)?;
     let mcycles_count = session_info
         .segments
         .iter()
@@ -143,13 +143,13 @@ async fn main() -> Result<()> {
     // - the lockin price: the price at which the request can be locked in by a prover, if the
     //   request is not fulfilled before the timeout, the prover can be slashed.
     // If the input exceeds 2 kB, upload the input and provide its URL instead, as a rule of thumb.
-    let request_input = if input_guest_bytes.len() > 2 << 10 {
-        let input_url = boundless_client.upload_input(&input_guest_bytes).await?;
+    let request_input = if guest_env_bytes.len() > 2 << 10 {
+        let input_url = boundless_client.upload_input(&guest_env_bytes).await?;
         tracing::info!("Uploaded input to {}", input_url);
         Input::url(input_url)
     } else {
         tracing::info!("Sending input inline with request");
-        Input::inline(input_guest_bytes.clone())
+        Input::inline(guest_env_bytes.clone())
     };
 
     let request = ProofRequestBuilder::new()
