@@ -179,7 +179,11 @@ async fn main() -> Result<()> {
         .unwrap();
 
     // Send the request and wait for it to be completed.
-    let (request_id, expires_at) = boundless_client.submit_request(&request).await?;
+    let (request_id, expires_at) = if args.offchain {
+        boundless_client.submit_request_offchain(&request).await?
+    } else {
+        boundless_client.submit_request(&request).await?
+    };
     tracing::info!("Request 0x{request_id:x} submitted");
 
     // Wait for the request to be fulfilled by the market, returning the journal and seal.
