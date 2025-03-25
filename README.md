@@ -10,7 +10,7 @@ Export your Sepolia wallet private key as an environment variable (making sure i
 export WALLET_PRIVATE_KEY="YOUR_WALLET_PRIVATE_KEY"
 ```
 
-To allow provers to access your zkVM guest binary, it must be uploaded to a public URL. For this example we will upload to IPFS using Pinata. Pinata has a free tier with plenty of quota to get started. Sign up at [[Pinata](https://pinata.cloud/)](https://pinata.cloud/), generate an API key, and set the JWT as an environment variable:
+For provers to access the zkVM guest ELF binary, it must be uploaded to IPFS. This example uses [Pinata](https://pinata.cloud/). Pinata has a free tier with plenty of quota to get started. Create an account, generate an API key, and set the JWT as an environment variable:
 
 ```bash
 export PINATA_JWT="YOUR_PINATA_JWT"
