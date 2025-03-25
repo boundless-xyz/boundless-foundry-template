@@ -217,8 +217,8 @@ async fn main() -> Result<()> {
         .context("failed to get number from contract")?
         ._0;
     tracing::info!(
-        "Number for address: {:?} is set to {:?}",
-        boundless_client.caller(),
+        "The number variable for contract at address: {:?} is set to {:?}",
+        args.even_number_address,
         number
     );
 
