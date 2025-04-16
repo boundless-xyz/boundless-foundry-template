@@ -89,12 +89,13 @@ async fn main() -> Result<()> {
     let args = Args::parse();
 
     // Create a Boundless client from the provided parameters.
-    let boundless_client = ClientBuilder::default()
+    let boundless_client = ClientBuilder::new()
         .with_rpc_url(args.rpc_url)
         .with_boundless_market_address(args.boundless_market_address)
         .with_set_verifier_address(args.set_verifier_address)
         .with_order_stream_url(args.offchain.then_some(args.order_stream_url).flatten())
         .with_storage_provider_config(args.storage_config)
+        .await?
         .with_private_key(args.wallet_private_key)
         .build()
         .await?;
