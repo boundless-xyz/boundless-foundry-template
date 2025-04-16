@@ -45,9 +45,9 @@ jobs:
         uses: foundry-rs/foundry-toolchain@v1
       
       - name: install cargo risczero
-        uses: boundless-xyz/boundless/.github/actions/bininstall-risc0@release-0.7.0
+        uses: ./.github/actions/bininstall-risc0
         with:
-          risczero-version: '2.0.0'
+          risczero-version: '2.0.1'
           toolchain-version: '1.85.0'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
