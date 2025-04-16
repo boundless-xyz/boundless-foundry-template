@@ -57,7 +57,7 @@ jobs:
           locked: true
 
       - name: install cargo-risczero
-        run: cargo binstall -y --force cargo-risczero@2.0.2
+        run: cargo binstall -y --force cargo-risczero@2.0.1
 
       - name: install risc0 toolchain
         run: cargo risczero install --version r0.1.85.0
