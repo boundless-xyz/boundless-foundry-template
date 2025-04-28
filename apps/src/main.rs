@@ -176,7 +176,7 @@ async fn main() -> Result<()> {
                 // slashed.
                 .with_timeout(1000)
                 .with_lock_timeout(500)
-                .with_ramp_up_period(100)
+                .with_ramp_up_period(100),
         )
         .build()
         .unwrap();
