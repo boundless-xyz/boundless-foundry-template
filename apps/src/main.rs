@@ -54,7 +54,7 @@ struct Args {
     rpc_url: Url,
     /// Private key used to interact with the EvenNumber contract.
     #[clap(short, long, env)]
-    wallet_private_key: PrivateKeySigner,
+    private_key: PrivateKeySigner,
     /// Submit the request offchain via the provided order stream service url.
     #[clap(short, long, requires = "order_stream_url")]
     offchain: bool,
@@ -96,7 +96,7 @@ async fn main() -> Result<()> {
         .with_order_stream_url(args.offchain.then_some(args.order_stream_url).flatten())
         .with_storage_provider_config(args.storage_config)
         .await?
-        .with_private_key(args.wallet_private_key)
+        .with_private_key(args.private_key)
         .build()
         .await?;
 

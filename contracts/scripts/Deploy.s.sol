@@ -21,7 +21,7 @@ import {EvenNumber} from "../src/EvenNumber.sol";
 contract Deploy is Script {
     function run() external {
         // load ENV variables first
-        uint256 key = vm.envUint("WALLET_PRIVATE_KEY");
+        uint256 key = vm.envUint("PRIVATE_KEY");
         address verifierAddress = vm.envAddress("VERIFIER_ROUTER_ADDRESS");
         vm.startBroadcast(key);
 

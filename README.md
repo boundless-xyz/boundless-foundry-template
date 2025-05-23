@@ -7,7 +7,7 @@ This template serves as a starter app powered by verifiable compute from [Boundl
 Export your Sepolia wallet private key as an environment variable (making sure it has enough funds):
 
 ```bash
-export WALLET_PRIVATE_KEY="YOUR_WALLET_PRIVATE_KEY"
+export PRIVATE_KEY="YOUR_PRIVATE_KEY"
 ```
 
 For provers to access the zkVM guest ELF binary, it must be uploaded to IPFS. This example uses [Pinata](https://pinata.cloud/). Pinata has a free tier with plenty of quota to get started. Create an account, generate an API key, and set the JWT as an environment variable:
