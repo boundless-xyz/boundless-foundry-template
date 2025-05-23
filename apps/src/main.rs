@@ -89,12 +89,13 @@ async fn main() -> Result<()> {
     let args = Args::parse();
 
     // Create a Boundless client from the provided parameters.
-    let boundless_client = ClientBuilder::default()
+    let boundless_client = ClientBuilder::new()
         .with_rpc_url(args.rpc_url)
         .with_boundless_market_address(args.boundless_market_address)
         .with_set_verifier_address(args.set_verifier_address)
         .with_order_stream_url(args.offchain.then_some(args.order_stream_url).flatten())
         .with_storage_provider_config(args.storage_config)
+        .await?
         .with_private_key(args.wallet_private_key)
         .build()
         .await?;
@@ -168,12 +169,14 @@ async fn main() -> Result<()> {
                 // `with_max_price` methods to set the price directly.
                 .with_min_price_per_mcycle(parse_ether("0.001")?, mcycles_count)
                 // NOTE: If your offer is not being accepted, try increasing the max price.
-                .with_max_price_per_mcycle(parse_ether("0.002")?, mcycles_count)
+                .with_max_price_per_mcycle(parse_ether("0.05")?, mcycles_count)
                 // The timeout is the maximum number of blocks the request can stay
                 // unfulfilled in the market before it expires. If a prover locks in
                 // the request and does not fulfill it before the timeout, the prover can be
                 // slashed.
-                .with_timeout(1000),
+                .with_timeout(1000)
+                .with_lock_timeout(500)
+                .with_ramp_up_period(100),
         )
         .build()
         .unwrap();

@@ -43,6 +43,10 @@ RUST_LOG=info cargo run --bin app -- --even-number-address ${EVEN_NUMBER_ADDRESS
 To build the example run:
 
 ```bash
+# Install RISC Zero toolchain if not already installed
+curl -L https://risczero.com/install | bash
+rzup install
+
 # Populate the `./lib` submodule dependencies
 git submodule update --init --recursive
 cargo build

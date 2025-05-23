@@ -43,24 +43,14 @@ jobs:
 
       - name: install foundry
         uses: foundry-rs/foundry-toolchain@v1
-
-      - name: install rust
-        uses: risc0/risc0/.github/actions/rustup@release-1.2
-        with:
-          toolchain: '1.81'
       
-      - name: install cargo-binstall
-        uses: baptiste0928/cargo-install@904927dbe77864e0f2281519fe9d5bd097a220b3
+      - name: install cargo risczero
+        uses: ./.github/actions/bininstall-risc0
         with:
-          crate: cargo-binstall
-          version: '=1.10.8'
-          locked: true
-
-      - name: install cargo-risczero
-        run: cargo binstall -y --force cargo-risczero@1.2.0
-
-      - name: install risc0 toolchain
-        run: cargo risczero install --version r0.1.81.0
+          risczero-version: '2.0.1'
+          toolchain-version: '1.85.0'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: cargo build
         run: cargo build
@@ -88,22 +78,15 @@ jobs:
         uses: foundry-rs/foundry-toolchain@v1
 
       - name: install rust
-        uses: risc0/risc0/.github/actions/rustup@release-1.2
+        uses: risc0/risc0/.github/actions/rustup@release-2.0
         with:
-          toolchain: '1.81'
+          toolchain: '1.85'
 
       - name: install cargo-sort
         uses: baptiste0928/cargo-install@904927dbe77864e0f2281519fe9d5bd097a220b3
         with:
           crate: cargo-sort
           version: "=1.0.9"
-          locked: true
-
-      - name: install cargo-binstall
-        uses: baptiste0928/cargo-install@904927dbe77864e0f2281519fe9d5bd097a220b3
-        with:
-          crate: cargo-binstall
-          version: '=1.10.8'
           locked: true
 
       - name: cargo Sort
