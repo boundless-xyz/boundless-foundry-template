@@ -47,10 +47,8 @@ To build the example run:
 curl -L https://risczero.com/install | bash
 rzup install
 
-# Populate the `./lib` submodule dependencies
-git submodule update --init --recursive
+forge init --template https://github.com/boundless-xyz/boundless-foundry-template boundless-foundry-template
 cargo build
-forge build
 ```
 
 ### Test

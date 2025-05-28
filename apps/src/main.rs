@@ -70,9 +70,12 @@ struct Args {
     /// Address of the RiscZeroSetVerifier contract.
     #[clap(short, long, env)]
     set_verifier_address: Address,
-    /// Address of the BoundlessfMarket contract.
+    /// Address of the BoundlessMarket contract.
     #[clap(short, long, env)]
     boundless_market_address: Address,
+    /// Address of the BoundlessfMarket contract.
+    #[clap(long, env)]
+    image_url: Option<Url>,
 }
 
 #[tokio::main]
