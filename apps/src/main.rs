@@ -103,13 +103,20 @@ async fn main() -> Result<()> {
         .build()
         .await?;
 
-    // Upload the ELF to the storage provider so that it can be fetched by the market.
-    ensure!(
-        boundless_client.storage_provider.is_some(),
-        "a storage provider is required to upload the zkVM guest ELF"
-    );
-    let image_url = boundless_client.upload_program(IS_EVEN_ELF).await?;
-    tracing::info!("Uploaded image to {}", image_url);
+    // Use provided image URL or upload the ELF to the storage provider
+    let image_url = if let Some(url) = args.image_url {
+        tracing::info!("Using provided image URL: {}", url);
+        url
+    } else {
+        // Upload the ELF to the storage provider so that it can be fetched by the market.
+        ensure!(
+            boundless_client.storage_provider.is_some(),
+            "a storage provider is required to upload the zkVM guest ELF"
+        );
+        let uploaded_url = boundless_client.upload_program(IS_EVEN_ELF).await?;
+        tracing::info!("Uploaded image to {}", uploaded_url);
+        uploaded_url
+    };
 
     // Encode the input and upload it to the storage provider.
     tracing::info!("Number to publish: {}", args.number);

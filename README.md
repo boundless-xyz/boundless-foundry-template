@@ -10,12 +10,6 @@ Export your Sepolia wallet private key as an environment variable (making sure i
 export PRIVATE_KEY="YOUR_PRIVATE_KEY"
 ```
 
-For provers to access the zkVM guest ELF binary, it must be uploaded to IPFS. This example uses [Pinata](https://pinata.cloud/). Pinata has a free tier with plenty of quota to get started. Create an account, generate an API key, and set the JWT as an environment variable:
-
-```bash
-export PINATA_JWT="YOUR_PINATA_JWT"
-```
-
 To load the rest of the environment variables (i.e. Boundless contract deployments), run:
 
 ```bash
@@ -28,9 +22,23 @@ To load the rest of the environment variables (i.e. Boundless contract deploymen
 
 ## Run the example app
 
-The [example app](apps/src/main.rs) will upload your zkVM guest to IPFS, submit a request to the market for a proof that "4" is an even number, wait for the request to be fulfilled, and then submit that proof to the EvenNumber contract, setting the value to "4".
+The [example app](apps/src/main.rs) will submit a request to the market for a proof that "4" is an even number, wait for the request to be fulfilled, and then submit that proof to the EvenNumber contract, setting the value to "4".
 
-To run the example:
+To run the example using the pre-uploaded zkVM guest:
+
+```bash
+RUST_LOG=info cargo run --bin app -- --even-number-address ${EVEN_NUMBER_ADDRESS:?} --number 4 --image-url https://plum-accurate-weasel-904.mypinata.cloud/ipfs/QmU7eqsYWguHCYGQzcg42faQQkgRfWScig7BcsdM1sJciw
+```
+
+### Uploading your own guest program
+
+If you want to upload your own modified version of the zkVM guest, you'll need to set up [Pinata](https://pinata.cloud/) (which has a free tier). Create an account, generate an API key, and set the JWT as an environment variable:
+
+```bash
+export PINATA_JWT="YOUR_PINATA_JWT"
+```
+
+Then run without the `--image-url` flag:
 
 ```bash
 RUST_LOG=info cargo run --bin app -- --even-number-address ${EVEN_NUMBER_ADDRESS:?} --number 4
