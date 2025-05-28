@@ -23,8 +23,8 @@ risc0-build-ethereum = { version = "2.0" }
 risc0-ethereum-contracts = { version = "2.0" }
 
 alloy = { version = "0.15" }
-alloy-primitives = { version = "0.8", default-features = false, features = ["rlp", "serde", "std"] }
-alloy-sol-types = { version = "0.8" }
+alloy-primitives = { version = "1.0", default-features = false, features = ["rlp", "serde", "std"] }
+alloy-sol-types = { version = "1.0" }
 anyhow = { version = "1.0" }
 bincode = { version = "1.3" }
 bytemuck = { version = "1.16" }
