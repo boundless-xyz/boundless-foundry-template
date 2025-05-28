@@ -1,6 +1,8 @@
 # Boundless Foundry Template
 
-This template serves as a starter app powered by verifiable compute from [Boundless](https://docs.beboundless.xyz). It is built around a simple smart contract, `EvenNumber` deployed on Sepolia, and its associated RISC Zero guest, `is-even`.
+This template serves as a starter app powered by verifiable compute via [Boundless](https://docs.beboundless.xyz). 
+
+It is built around a simple smart contract, `EvenNumber` deployed on Sepolia, and its associated RISC Zero guest, `is-even`. To get you started, we have deployed to [EvenNumber contract](https://sepolia.etherscan.io/address/0xE819474E78ad6e1C720a21250b9986e1f6A866A3#code) to Sepolia; we have also pre-uploaded the `is-even` guest to IPFS.
 
 ## Set up your environment variables
 
@@ -13,7 +15,7 @@ export PRIVATE_KEY="YOUR_PRIVATE_KEY"
 To load the rest of the environment variables (i.e. Boundless contract deployments), run:
 
 ```bash
-. ./.env
+source .env.testnet
 ```
 
 > If you'd like to deploy your own version of the `EvenNumber.sol` contract, please run:
