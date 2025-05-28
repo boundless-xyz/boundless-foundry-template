@@ -105,7 +105,7 @@ async fn main() -> Result<()> {
         boundless_client.storage_provider.is_some(),
         "a storage provider is required to upload the zkVM guest ELF"
     );
-    let image_url = boundless_client.upload_image(IS_EVEN_ELF).await?;
+    let image_url = boundless_client.upload_program(IS_EVEN_ELF).await?;
     tracing::info!("Uploaded image to {}", image_url);
 
     // Encode the input and upload it to the storage provider.
@@ -221,8 +221,7 @@ async fn main() -> Result<()> {
         .get()
         .call()
         .await
-        .context("failed to get number from contract")?
-        ._0;
+        .context("failed to get number from contract")?;
     tracing::info!(
         "The number variable for contract at address: {:?} is set to {:?}",
         args.even_number_address,
