@@ -29,7 +29,7 @@ fn proves_even_number() {
     // NOTE: Use the executor to run tests without proving.
     let session_info = default_executor().execute(env, IS_EVEN_ELF).unwrap();
 
-    let x = U256::abi_decode(&session_info.journal.bytes, true).unwrap();
+    let x = U256::abi_decode(&session_info.journal.bytes).unwrap();
     assert_eq!(x, even_number);
 }
 
