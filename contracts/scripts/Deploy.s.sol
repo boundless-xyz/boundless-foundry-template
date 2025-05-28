@@ -1,4 +1,4 @@
-// Copyright 2024 RISC Zero, Inc.
+// Copyright 2025 RISC Zero, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ contract Deploy is Script {
     function run() external {
         // load ENV variables first
         uint256 key = vm.envUint("PRIVATE_KEY");
-        address verifierAddress = vm.envAddress("VERIFIER_ROUTER_ADDRESS");
+        address verifierAddress = vm.envAddress("VERIFIER_ADDRESS");
         vm.startBroadcast(key);
 
         IRiscZeroVerifier verifier = IRiscZeroVerifier(verifierAddress);
