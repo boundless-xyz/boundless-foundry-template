@@ -12,7 +12,7 @@ edition = "2021"
 guests = { path = "./guests" }
 
 # boundless monorepo dependencies.
-boundless-market = "0.8"
+boundless-market = "0.9"
 
 # risc0 monorepo dependencies.
 risc0-build = { version = "2.1", features = ["docker"] }
