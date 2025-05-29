@@ -78,6 +78,7 @@ checksum = "517e5acbd38b6d4c59da380e8bbadc6d365bf001903ce46cf5521c53c647e07b"
 dependencies = [
  "alloy-primitives",
  "num_enum",
+ "serde",
  "strum 0.27.1",
 ]
 
@@ -2007,11 +2008,12 @@ dependencies = [
 
 [[package]]
 name = "boundless-market"
-version = "0.8.0"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d936359169584120ced4ca5208231e9cc1845591d13d559e6240e14ed878d6a8"
+checksum = "f05e1f05df76348d98d3f56ce52ffe16626b1690ebc279aa12ca44d14df78929"
 dependencies = [
  "alloy",
+ "alloy-chains",
  "alloy-primitives",
  "alloy-sol-types",
  "anyhow",
@@ -2021,6 +2023,9 @@ dependencies = [
  "bytemuck",
  "chrono",
  "clap",
+ "dashmap",
+ "derive_builder",
+ "futures",
  "futures-util",
  "hex",
  "httpmock",
