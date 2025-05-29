@@ -92,9 +92,15 @@ async fn main() -> Result<()> {
     // Build the request based on whether program URL is provided
     let request = if let Some(program_url) = args.program_url {
         // Use the provided URL
-        client.new_request().with_program_url(program_url)?.with_stdin(input_bytes.clone())
+        client
+            .new_request()
+            .with_program_url(program_url)?
+            .with_stdin(input_bytes.clone())
     } else {
-        client.new_request().with_program(IS_EVEN_ELF).with_stdin(input_bytes)
+        client
+            .new_request()
+            .with_program(IS_EVEN_ELF)
+            .with_stdin(input_bytes)
     };
 
     let (request_id, expires_at) = client.submit_onchain(request).await?;
@@ -113,15 +119,20 @@ async fn main() -> Result<()> {
     // We interact with the EvenNumber contract by calling the set function with our number and
     // the seal (i.e. proof) returned by the market.
     let even_number = IEvenNumberInstance::new(args.even_number_address, client.provider().clone());
-    let call_set = even_number.set(U256::from(args.number), seal).from(client.caller());
+    let call_set = even_number
+        .set(U256::from(args.number), seal)
+        .from(client.caller());
 
     // By calling the set function, we verify the seal against the published roots
     // of the SetVerifier contract.
     tracing::info!("Calling EvenNumber set function");
     let pending_tx = call_set.send().await.context("failed to broadcast tx")?;
     tracing::info!("Broadcasting tx {}", pending_tx.tx_hash());
-    let tx_hash =
-        pending_tx.with_timeout(Some(TX_TIMEOUT)).watch().await.context("failed to confirm tx")?;
+    let tx_hash = pending_tx
+        .with_timeout(Some(TX_TIMEOUT))
+        .watch()
+        .await
+        .context("failed to confirm tx")?;
     tracing::info!("Tx {:?} confirmed", tx_hash);
 
     // Query the value stored at the EvenNumber address to check it was set correctly
