@@ -29,7 +29,7 @@ The [example app](apps/src/main.rs) will submit a request to the market for a pr
 To run the example using the pre-uploaded zkVM guest:
 
 ```bash
-RUST_LOG=info cargo run --bin app -- --even-number-address ${EVEN_NUMBER_ADDRESS:?} --number 4 --image-url https://plum-accurate-weasel-904.mypinata.cloud/ipfs/QmU7eqsYWguHCYGQzcg42faQQkgRfWScig7BcsdM1sJciw
+RUST_LOG=info cargo run --bin app -- --rpc-url ${RPC_URL:?} --private-key ${PRIVATE_KEY:?} --even-number-address ${EVEN_NUMBER_ADDRESS:?} --number 4 --program-url https://plum-accurate-weasel-904.mypinata.cloud/ipfs/QmU7eqsYWguHCYGQzcg42faQQkgRfWScig7BcsdM1sJciw
 ```
 
 ### Uploading your own guest program
@@ -40,10 +40,10 @@ If you want to upload your own modified version of the zkVM guest, you'll need t
 export PINATA_JWT="YOUR_PINATA_JWT"
 ```
 
-Then run without the `--image-url` flag:
+Then run without the `--program-url` flag:
 
 ```bash
-RUST_LOG=info cargo run --bin app -- --even-number-address ${EVEN_NUMBER_ADDRESS:?} --number 4
+RUST_LOG=info cargo run --bin app -- --rpc-url ${RPC_URL:?} --private-key ${PRIVATE_KEY:?} --even-number-address ${EVEN_NUMBER_ADDRESS:?} --number 4
 ```
 
 ## Local Development 
