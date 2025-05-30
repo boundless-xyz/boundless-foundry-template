@@ -58,6 +58,9 @@ struct Args {
     /// Configuration for the StorageProvider to use for uploading programs and inputs.
     #[clap(flatten, next_help_heading = "Storage Provider")]
     storage_config: StorageProviderConfig,
+    /// Deployment of the Boundless contracts and services to use.
+    ///
+    /// Will be automatically resolved from the connected chain ID if unspecified.
     #[clap(flatten, next_help_heading = "Boundless Market Deployment")]
     deployment: Option<Deployment>,
 }
