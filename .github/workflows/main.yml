@@ -47,7 +47,7 @@ jobs:
       - name: install cargo risczero
         uses: ./.github/actions/bininstall-risc0
         with:
-          risczero-version: '2.0.1'
+          risczero-version: '2.1.0'
           toolchain-version: '1.85.0'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -78,7 +78,7 @@ jobs:
         uses: foundry-rs/foundry-toolchain@v1
 
       - name: install rust
-        uses: risc0/risc0/.github/actions/rustup@release-2.0
+        uses: risc0/risc0/.github/actions/rustup@release-2.1
         with:
           toolchain: '1.85'
 

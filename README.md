@@ -74,5 +74,3 @@ Test the Rust code including the guest with:
 ```bash
 cargo test
 ```
-
-
