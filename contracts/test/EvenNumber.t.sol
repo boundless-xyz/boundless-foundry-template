@@ -56,4 +56,27 @@ contract EvenNumberTest is RiscZeroCheats, Test {
         vm.expectRevert(VerificationFailed.selector);
         evenNumber.set(1, receipt.seal);
     }
+
+    // Test that the NumberUpdated event is emitted with correct values
+    function test_NumberUpdatedEvent() public {
+        uint256 initialNumber = evenNumber.get();
+        uint256 newNumber = 42;
+        RiscZeroReceipt memory receipt = verifier.mockProve(ImageID.IS_EVEN_ID, sha256(abi.encode(newNumber)));
+
+        // Expect the NumberUpdated event with the correct old and new values
+        vm.expectEmit(true, true, true, true);
+        emit EvenNumber.NumberUpdated(initialNumber, newNumber);
+        
+        // Set the new number
+        evenNumber.set(newNumber, receipt.seal);
+        
+        // Update again to test with non-zero initial value
+        uint256 newerNumber = 100;
+        RiscZeroReceipt memory receipt2 = verifier.mockProve(ImageID.IS_EVEN_ID, sha256(abi.encode(newerNumber)));
+        
+        vm.expectEmit(true, true, true, true);
+        emit EvenNumber.NumberUpdated(newNumber, newerNumber);
+        
+        evenNumber.set(newerNumber, receipt2.seal);
+    }
 }
