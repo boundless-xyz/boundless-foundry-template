@@ -29,19 +29,11 @@ It is built around a simple smart contract, `EvenNumber` deployed on Sepolia, an
    export PRIVATE_KEY="YOUR_PRIVATE_KEY"
    ```
 
-   You'll also need a deployment of the [EvenNumber contract](./contracts/src/EvenNumber.sol):
-
+   You'll also need a deployment of the [EvenNumber contract](./contracts/src/EvenNumber.sol).
    You can use a predeployed contract on Sepolia:
 
    ```bash
    export EVEN_NUMBER_ADDRESS="0xE819474E78ad6e1C720a21250b9986e1f6A866A3"
-   ```
-
-   Or, you can deploy it yourself:
-
-   ```
-   VERIFIER_ADDRESS="0x925d8331ddc0a1F0d96E68CF073DFE1d92b69187" forge script contracts/scripts/Deploy.s.sol --rpc-url ${RPC_URL:?} --broadcast -vv
-   export EVEN_NUMBER_ADDRESS=# address from the logs the script.
    ```
 
 4. Run the example app
@@ -78,16 +70,33 @@ Test the Rust code including the guest with:
 cargo test
 ```
 
+### Deploying the EvenNumber contract
+
+You can deploy your smart contracts using forge script. To deploy the `EvenNumber` contract, run:
+
+```
+VERIFIER_ADDRESS="0x925d8331ddc0a1F0d96E68CF073DFE1d92b69187" forge script contracts/scripts/Deploy.s.sol --rpc-url ${RPC_URL:?} --broadcast -vv
+export EVEN_NUMBER_ADDRESS=# address from the logs the script.
+```
+
+This will use the locally build guest binary, which you will need to upload using the steps below.
+
 ### Uploading your own guest program
 
-If you want to upload your own modified version of the zkVM guest, you'll need to set up [Pinata](https://pinata.cloud/) (which has a free tier). Create an account, generate an API key, and set the JWT as an environment variable:
+When you modify your program, you'll need to upload your program to a public URL.
+You can use any file hosting service, and the Boundless SDK provides built-in support uploading to AWS S3, and to IPFS via [Pinata](https://www.pinata.cloud/).
+
+If you'd like to upload your program automatically using Pinata:
 
 ```bash
+# The JWT from your Pinata account: https://app.pinata.cloud/developers/api-keys
 export PINATA_JWT="YOUR_PINATA_JWT"
 ```
 
 Then run without the `--program-url` flag:
 
 ```bash
-RUST_LOG=info cargo run --bin app -- --rpc-url ${RPC_URL:?} --private-key ${PRIVATE_KEY:?} --even-number-address ${EVEN_NUMBER_ADDRESS:?} --number 4
+RUST_LOG=info cargo run --bin app -- --number 4
 ```
+
+You can also upload your program to any public URL ahead of time, and supply the URL via the `--program-url` flag.
