@@ -12,10 +12,12 @@ Export your Sepolia wallet private key as an environment variable (making sure i
 export PRIVATE_KEY="YOUR_PRIVATE_KEY"
 ```
 
-To load the rest of the environment variables (i.e. Boundless contract deployments), run:
+To load the rest of the environment variables (i.e. RPC URL and contract addresses):
 
 ```bash
-source .env.testnet
+export RPC_URL="https://ethereum-sepolia-rpc.publicnode.com"
+export VERIFIER_ADDRESS="0x925d8331ddc0a1F0d96E68CF073DFE1d92b69187"
+export EVEN_NUMBER_ADDRESS="0xE819474E78ad6e1C720a21250b9986e1f6A866A3"
 ```
 
 > If you'd like to deploy your own version of the `EvenNumber.sol` contract, please run:
@@ -46,7 +48,7 @@ Then run without the `--program-url` flag:
 RUST_LOG=info cargo run --bin app -- --rpc-url ${RPC_URL:?} --private-key ${PRIVATE_KEY:?} --even-number-address ${EVEN_NUMBER_ADDRESS:?} --number 4
 ```
 
-## Local Development 
+## Local Development
 
 ### Build
 
