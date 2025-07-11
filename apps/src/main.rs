@@ -56,7 +56,7 @@ struct Args {
     #[clap(long, env)]
     program_url: Option<Url>,
     /// Submit the request offchain via the provided order stream service url.
-    #[clap(short, long, requires = "order_stream_url")]
+    #[clap(short, long)]
     offchain: bool,
     /// Configuration for the StorageProvider to use for uploading programs and inputs.
     #[clap(flatten, next_help_heading = "Storage Provider")]
