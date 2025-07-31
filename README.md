@@ -76,7 +76,7 @@ You can deploy your smart contracts using forge script. To deploy the `EvenNumbe
 
 ```
 VERIFIER_ADDRESS="0x925d8331ddc0a1F0d96E68CF073DFE1d92b69187" forge script contracts/scripts/Deploy.s.sol --rpc-url ${RPC_URL:?} --broadcast -vv
-export EVEN_NUMBER_ADDRESS=# address from the logs the script.
+export EVEN_NUMBER_ADDRESS=# address from the logs used in the script.
 ```
 
 This will use the locally build guest binary, which you will need to upload using the steps below.
