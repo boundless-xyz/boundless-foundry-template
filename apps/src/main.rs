@@ -111,9 +111,9 @@ async fn main() -> Result<()> {
 
     let (request_id, expires_at) = client.submit_onchain(request).await?;
 
-    // Wait for the request to be fulfilled. The market will return the journal and seal.
+    // Wait for the request to be fulfilled. The market will return the fulfillment.
     tracing::info!("Waiting for request {:x} to be fulfilled", request_id);
-    let (_journal, seal) = client
+    let fulfillment = client
         .wait_for_request_fulfillment(
             request_id,
             Duration::from_secs(5), // check every 5 seconds
@@ -126,7 +126,7 @@ async fn main() -> Result<()> {
     // the seal (i.e. proof) returned by the market.
     let even_number = IEvenNumberInstance::new(args.even_number_address, client.provider().clone());
     let call_set = even_number
-        .set(U256::from(args.number), seal)
+        .set(U256::from(args.number), fulfillment.seal)
         .from(client.caller());
 
     // By calling the set function, we verify the seal against the published roots

@@ -5,7 +5,7 @@ edition = "2021"
 publish = false
 
 [dependencies]
-alloy = { workspace = true, features = ["signers", "full"] }
+alloy = { workspace = true, features = ["sol-types", "signers", "signer-local"] }
 anyhow = { workspace = true }
 boundless-market = { workspace = true }
 bytemuck = { workspace = true }

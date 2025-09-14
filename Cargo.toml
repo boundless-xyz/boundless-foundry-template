@@ -12,15 +12,15 @@ edition = "2021"
 guests = { path = "./guests" }
 
 # boundless monorepo dependencies.
-boundless-market = { version = "0.13" }
+boundless-market = { git = "https://github.com/boundless-xyz/boundless", branch = "release-1.0" }
 
 # risc0 monorepo dependencies.
-risc0-build = { version = "2.3", features = ["docker"] }
-risc0-zkvm = { version = "2.3", default-features = false }
+risc0-build = { version = "3.0.3", features = ["docker"] }
+risc0-zkvm = { version = "3.0.3", default-features = false }
 
 # risc0-ethereum dependencies.
-risc0-build-ethereum = { version = "2.2" }
-risc0-ethereum-contracts = { version = "2.2" }
+risc0-build-ethereum = { version = "3.0.1" }
+risc0-ethereum-contracts = { version = "3.0.1" }
 
 alloy = { version = "1.0" }
 alloy-primitives = { version = "1.0", default-features = false, features = ["rlp", "serde", "std"] }

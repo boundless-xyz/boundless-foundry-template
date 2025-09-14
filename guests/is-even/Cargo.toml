@@ -8,7 +8,7 @@ edition = "2021"
 [dependencies]
 alloy-primitives = { version = "1.0", default-features = false, features = ["rlp", "serde", "std"] }
 alloy-sol-types = { version = "1.0" }
-risc0-zkvm = { version = "2.3", default-features = false, features = ["std"] }
+risc0-zkvm = { version = "3.0", default-features = false, features = ["std"] }
 
 [profile.release]
 debug = 1
