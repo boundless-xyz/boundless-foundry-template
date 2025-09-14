@@ -43,7 +43,8 @@ jobs:
 
       - name: install foundry
         uses: foundry-rs/foundry-toolchain@v1
-      
+
+      - uses: risc0/risc0/.github/actions/rustup@v3.0.3      
       - name: install cargo risczero
         uses: ./.github/actions/bininstall-risc0
         with:
@@ -78,9 +79,7 @@ jobs:
         uses: foundry-rs/foundry-toolchain@v1
 
       - name: install rust
-        uses: risc0/risc0/.github/actions/rustup@release-3.0
-        with:
-          toolchain: '1.88'
+        uses: risc0/risc0/.github/actions/rustup@v3.0.3
 
       - name: install cargo-sort
         uses: baptiste0928/cargo-install@904927dbe77864e0f2281519fe9d5bd097a220b3
