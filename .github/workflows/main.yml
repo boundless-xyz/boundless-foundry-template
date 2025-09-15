@@ -43,8 +43,7 @@ jobs:
 
       - name: install foundry
         uses: foundry-rs/foundry-toolchain@v1
-
-      - uses: risc0/risc0/.github/actions/rustup@v3.0.3      
+        
       - name: install cargo risczero
         uses: ./.github/actions/bininstall-risc0
         with:
