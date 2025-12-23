@@ -51,8 +51,12 @@ It is built around a simple smart contract, `EvenNumber` deployed on Sepolia, an
 
 To build the example run:
 
-```
+```bash
+# Install dependencies
+forge install
+# Build Solidity contracts 
 forge build
+# Build guest program and host application
 cargo build
 ```
 
