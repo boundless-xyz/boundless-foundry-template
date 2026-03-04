@@ -1,7 +1,6 @@
 name: Find or Create Linear Issue for PR
 
 on:
-  workflow_dispatch:
   pull_request:
     branches:
       - main
