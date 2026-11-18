@@ -1,3 +1,5 @@
+> **Archived:** This repository is no longer maintained and is preserved for reference. For context on the Boundless ZK proving protocol pause and transition, see the [Boundless Foundation announcement](https://boundlessfdn.org/blog/zkc-the-ai-access-coin).
+
 # Boundless Foundry Template
 
 This template serves as a starter app powered by verifiable compute via [Boundless](https://docs.beboundless.xyz). 
